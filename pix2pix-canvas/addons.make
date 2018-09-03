@@ -1,0 +1,3 @@
+ofxCanvas
+ofxGui
+ofxMSATensorFlow

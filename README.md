@@ -1,4 +1,10 @@
-## pix2pix-server
+
+
+## pix2pixHD-server
+
+(better documentation coming soon)
+
+requires: ofxRunway, ofxHTTP, ofxIO, ofxSSLManager, ofxNetworkUtils, ofxSandboxTracker, ofxCv, ofxPoco
 
 1) install Docker + nvidia-docker
 

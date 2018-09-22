@@ -1,55 +1,39 @@
-//
-// Copyright (c) 2014 Christopher Baker <https://christopherbaker.net>
-//
-// SPDX-License-Identifier:	MIT
-//
-
-
 #pragma once
-
 
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "ofxCv.h"
 #include "ofxSandboxTracker.h"
 #include "ofxHTTP.h"
+#include "ofxRunway.h"
 
 
-class ofApp: public ofBaseApp
-{
+class ofApp: public ofBaseApp {
 public:
     void setup() override;
-    
     void update() override;
     void draw() override;
-    void draw2() ;
 
-    void sendInput() ;
+    void updateSandbox();
+    void receivedFromRunway();
     
     void keyPressed(int key) override;
 
-    ofImage img;
-
-
-
+    ofxRunway runway;
     ofxSandboxTracker sandbox;
     
-    int numTrackingColors = 3;
-    int width, height;
-    int srcMode = 2;
+    string host;
+    int numTrackingColors;
+    int width;
+    int height;
+    int srcMode;
+    bool isReady;
+    bool debug;
     
     ofVideoGrabber cam;
     ofVideoPlayer video;
+
     ofImage src;
-
-    bool debug;
-
-
-	ofxPanel panel;
-
-
-    ofFbo fbo;
-    ofFloatImage img_in, img_out;
-    ofPixels pix_in;
-
+    ofImage input, output;
+    ofPixels inputPixels;
 };

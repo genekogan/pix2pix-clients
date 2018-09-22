@@ -6,5 +6,6 @@ ofxMediaType
 ofxNetworkUtils
 ofxOpenCv
 ofxPoco
-ofxSandboxTracker
+ofxRunway
 ofxSSLManager
+ofxSandboxTracker

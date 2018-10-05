@@ -1,10 +1,19 @@
 
-
-## pix2pixHD-server
-
 (better documentation coming soon)
 
-requires: ofxRunway, ofxHTTP, ofxIO, ofxSSLManager, ofxNetworkUtils, ofxSandboxTracker, ofxCv, ofxPoco
+Requirements:
+* [ofxRunway](https://github.com/genekogan/ofxRunway)
+* [ofxCanvas](https://github.com/genekogan/ofxCanvas)
+* [ofxSandboxTracker](https://github.com/genekogan/ofxSandboxTracker)
+* [ofxCv](https://github.com/kylemcdonald/ofxCv)
+* [ofxHTTP](https://github.com/bakercp/ofxHTTP)
+* [ofxIO](https://github.com/bakercp/ofxIO)
+* [ofxSSLManager](https://github.com/bakercp/ofxSSLManager)
+* [ofxMediaType](https://github.com/bakercp/ofxMediaType)
+* [ofxNetworkUtils](https://github.com/bakercp/ofxNetworkUtils)
+
+
+# setting up the server
 
 1) install Docker + nvidia-docker
 
@@ -32,4 +41,12 @@ https://github.com/NVIDIA/nvidia-docker (quickstart)
 
     python server.py
 
+
+# sketch-transform
+
 7) launch openframeworks client
+
+# city-transform
+
+7) launch openframeworks client
+

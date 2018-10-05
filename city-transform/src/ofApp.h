@@ -15,7 +15,6 @@ public:
     void draw() override;
 
     void updateSandbox();
-    void receivedFromRunway();
     
     void keyPressed(int key) override;
 
@@ -26,6 +25,8 @@ public:
     int numTrackingColors;
     int width;
     int height;
+    int srcWidth;
+    int srcHeight;
     int srcMode;
     bool isReady;
     bool debug;
@@ -35,5 +36,6 @@ public:
 
     ofImage src;
     ofImage input, output;
-    ofPixels inputPixels;
+    
+    ofTexture outputTex;
 };

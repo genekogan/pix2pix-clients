@@ -9,7 +9,8 @@ void ofApp::setup() {
     ofBackground(0);
 
     //host = "http://d6e64b8d.ngrok.io/infer";
-    host = "YOUR_HOST";
+    host = "http://ba92328c.ngrok.io/infer";
+                   
     width = 1024;
     height = 512;
     debug = true;
@@ -17,78 +18,94 @@ void ofApp::setup() {
     numTrackingColors = 3;
     isReady = true;
 
-    // setup cv
-    sandbox.setup(width, height, numTrackingColors);
-    sandbox.setFilterColor(0, ofColor(41, 83, 74));
-    sandbox.setFilterColor(1, ofColor(223, 171, 37));
-    sandbox.setFilterColor(2, ofColor(199, 194, 196));
-    sandbox.setThreshold(220);
-
     // setup input
     if (srcMode==0) {
+        cam.setDeviceID(1);
         cam.setup(640, 480);
+        srcWidth = 640;
+        srcHeight = 480;
     }
     else if (srcMode==1) {
         src.load("test3.png");
         src.resize(width, height);
+        srcWidth = width;
+        srcHeight = height;
     }
     else if (srcMode==2) {
         video.load("/Users/gene/Documents/futurium_test2.mp4");
         video.setLoopState(OF_LOOP_NORMAL);
         video.play();
+        srcWidth = video.getWidth();
+        srcHeight = video.getHeight();
     }
+    
+    // setup cv
+    sandbox.setup(srcWidth, srcHeight);
+    sandbox.setDebugPosition(0, 0);
+    sandbox.setTrackColor(0, ofColor(120, 0, 0));
+    sandbox.setTrackColor(1, ofColor(0, 150, 0));
+    sandbox.setTrackColor(2, ofColor(0, 0, 100));
+    sandbox.setTrackColor(3, ofColor(255, 255, 255));
+    sandbox.setTrackColor(4, ofColor(0, 0, 0));
+    sandbox.setTrackColor(0, ofColor(255, 0, 0));
+    sandbox.setTrackColor(1, ofColor(10, 255, 10));
+    sandbox.setTrackColor(2, ofColor(0, 0, 255));
+    sandbox.setTrackColor(3, ofColor(255, 255, 255));
+    sandbox.setTrackColor(4, ofColor(0, 0, 0));
 
     // init images
-    inputPixels.allocate(width, height, OF_IMAGE_COLOR);
     input.allocate(width, height, OF_IMAGE_COLOR);
     output.allocate(width, height, OF_IMAGE_COLOR);
     
     // setup Runway client
     ofLog::setChannel(std::make_shared<ofxIO::ThreadsafeConsoleLoggerChannel>());
     runway.setup(host);
-    runway.start();
-    ofAddListener(ofxRunway::runwayEvent, this, &ofApp::receivedFromRunway);
+//    runway.start();
 }
 
 void ofApp::update(){
-    if (srcMode==1) {
+    sandbox.setThreshold(ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 255));
+    
+    if (srcMode==0) {
         cam.update();
         if(cam.isFrameNew()) {
             src.setFromPixels(cam.getPixels());
-            src.resize(width, height);
             updateSandbox();
+            runway.send(input.getPixels());
         }
     }
     else if (srcMode==2) {
         video.update();
         if(video.isFrameNew()) {
             src.setFromPixels(video.getPixels());
-            src.resize(width, height);
             updateSandbox();
+            runway.send(input.getPixels());
         }
     }
     else if (srcMode == 0) {
         updateSandbox();
+        runway.send(input.getPixels());
     }
+    
+    
+    ofPixels processedPixels;
+    while (runway.tryReceive(processedPixels)) {
+        outputTex.loadData(processedPixels);
+    }
+
+    ofSetWindowTitle(ofToString(ofGetFrameRate()));
 }
 
 void ofApp::updateSandbox(){
+    ofPixels inputPixels;
     sandbox.update(src);
     sandbox.getFbo().readToPixels(inputPixels);
     input.setFromPixels(inputPixels);
     input.resize(width, height);
-    //ofLog() << img_in.getImageType();
-    
-    if (isReady) {
-        runway.send(input);
-        runway.start();
-        isReady = false;
-    }
-    
-    //sendInput();
 }
 
 
+/*
 void ofApp::receivedFromRunway() {
     ofLog() << "received from runway";
     
@@ -97,96 +114,33 @@ void ofApp::receivedFromRunway() {
     output.setFromPixels(p2);  // <-- CRASHING!
     
     isReady = true;
-}
+}*/
 
 void ofApp::draw() {
     ofBackgroundGradient(ofColor::white, ofColor::black);
 
-    ofDrawBitmapStringHighlight("See console for output.", ofPoint(30, 30));
-    if (output.isAllocated()) {
-        output.draw(50, 50+512);
+    /*
+    if (outputTex.isAllocated()) {
+        outputTex.draw(0, 0+height);
     }
     if (input.isAllocated()){
-        input.draw(50, 50);
-    }
+        input.draw(width, 0);
+        src.draw(0, 0);
+    }*/
+    
+    //src.draw(0, 0);
+    sandbox.drawDebug();
+    
+    outputTex.draw(300, 0+height);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    int x = ofGetMouseX();
-    int y = ofGetMouseY();
-    
-    unsigned char * pixels = src.getPixels().getData();
-    int index = 3 * (y * src.getWidth() + x);
-    int r = pixels[index];
-    int g = pixels[index+1];
-    int b = pixels[index+2];
-    
-    if (key=='1') {
-        sandbox.setFilterColor(0, ofColor(r, g, b));
-    }
-    else if (key=='2') {
-        sandbox.setFilterColor(1, ofColor(r, g, b));
-    }
-    else if (key=='3') {
-        sandbox.setFilterColor(2, ofColor(r, g, b));
-    }
+    sandbox.keyEvent(key);
 
-    else if (key==' '){
+
+    if (key==' '){
         debug = !debug;
     }
 }
 
-/*
-void ofApp::sendInput() {
-    
-    ofSaveImage(img_in.getPixels(), buffer_in, OF_IMAGE_FORMAT_JPEG);
-    multimap<string, string> formFields = {{ "data", ofxIO::Base64Encoding::encode(buffer_in) }};
-    
-    // create request
-    ofxHTTP::Client client;
-    ofxHTTP::PostRequest request(host);
-    request.addFormFields(formFields);
-    
-    try
-    {
-        ofLog() << "execute request";
-        auto response = client.execute(request);
-        
-        if (response->getStatus() == Poco::Net::HTTPResponse::HTTP_OK)
-        {
-            // A successful response.
-            //ofLogNotice("ofApp::setup") << "Response success, expecting " << response->estimatedContentLength() << " bytes.";
-            
-            ofLogNotice("ofApp::setup") << "Content Begin";
-            //std::cout << response->stream() << std::endl;
-            ofLogNotice("ofApp::setup") << "Content End";
-            
-            // decode Base64 buffer
-            ofxIO::ByteBuffer encodedBuffer(response->buffer());
-            ofxIO::ByteBuffer decodedBuffer;
-            ofxIO::Base64Encoding encoding;
-            encoding.decode(encodedBuffer, decodedBuffer);
-            
-            // Now save the buffer back to disk.
-            ofxIO::ByteBufferUtils::saveToFile(decodedBuffer, "decoded_input.png");
-            
-            ofPixels pixels;
-            ofLoadImage(pixels, ofBuffer(decodedBuffer.getCharPtr(), decodedBuffer.size()));
-            img_out.setFromPixels(pixels);
-        }
-        else
-        {
-            //ofLogError("ofApp::setup") << response->getStatus() << " " << response->getReason();
-        }
-    }
-    catch (const Poco::Exception& exc)
-    {
-        ofLogError("ofApp::setup") << exc.displayText();
-    }
-    catch (const std::exception& exc)
-    {
-        ofLogError("ofApp::setup") << exc.what();
-    }
-}
-*/

@@ -1,9 +1,11 @@
 ofxCanvas
+ofxCv
 ofxGui
 ofxHTTP
 ofxIO
 ofxMediaType
 ofxNetworkUtils
+ofxOpenCv
 ofxPoco
 ofxRunway
 ofxSSLManager

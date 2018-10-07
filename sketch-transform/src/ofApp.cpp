@@ -1,5 +1,10 @@
 #include "ofApp.h"
 
+
+using namespace cv;
+using namespace ofxCv;
+
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetWindowShape(1920, 1080);
@@ -11,8 +16,8 @@ void ofApp::setup(){
     //host = "http://d6e64b8d.ngrok.io/infer";
     host = "http://7a942e8a.ngrok.io/infer";
     
-    width = 1024;
-    height = 512;
+    width = 512;
+    height = 256;
     debug = true;
     isReady = true;
     
@@ -29,21 +34,27 @@ void ofApp::setup(){
     
     // setup Runway client
     ofLog::setChannel(std::make_shared<ofxIO::ThreadsafeConsoleLoggerChannel>());
-    runway.setup(host);
-    runway.start();
+    //runway.setup(host);
+    //runway.start();
     
     img.load("/Users/gene/Downloads/02830_young-girl-seated-in-a-meadow-1865_0_input_label.jpg");
     canvas.clearCanvas();
+    
+    
+    inputGray.allocate(width, height, OF_IMAGE_GRAYSCALE);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    //canvas.getCanvas().readToPixels(input);
+    
     canvas.getCanvas().readToPixels(input);
+    convertColor(input, inputGray, CV_RGB2GRAY);
+    threshold(inputGray, 100);
+    input.update();
+    inputGray.update();
+    
     
     if (toSend) {
-        input.save("hello.jpg");
-        input.load("hello.jpg");
         runway.send(input.getPixels());
         toSend = false;
     }
@@ -53,9 +64,6 @@ void ofApp::update(){
     while (runway.tryReceive(processedPixels)) {
         outputTex.loadData(processedPixels);
     }
-    
-    
-    ofSetWindowTitle(ofToString(ofGetFrameRate()));
 }
 
 //--------------------------------------------------------------
@@ -63,17 +71,27 @@ void ofApp::draw(){
     canvas.draw();
     canvas.drawGui();
 
-//
-//    ofSetColor(255);
-    outputTex.draw(ofGetWidth()-1024, ofGetHeight()-512);
-	
+    
+    if (input.isAllocated()){
+        input.draw(width + 85, 0);
+    }
+    if (inputGray.isAllocated()) {
+        inputGray.draw(width+95, height+5);
+    }
+
+
+    ofSetColor(255);
+    if (outputTex.isAllocated()) {
+        //outputTex.draw(ofGetWidth()-1024, ofGetHeight()-512);
+    }
+    ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate()), ofGetWidth()-80, 12);
     
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     if (key==' '){
-        toSend = true;
+        //toSend = true;
     }
 }
 

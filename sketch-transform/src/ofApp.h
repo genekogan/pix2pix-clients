@@ -2,9 +2,11 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
+#include "ofxCv.h"
 #include "ofxCanvas.h"
 #include "ofxHTTP.h"
 #include "ofxRunway.h"
+
 
 class ofApp : public ofBaseApp{
 public:
@@ -32,6 +34,7 @@ public:
     ofTexture outputTex;
 
 	ofxCanvas canvas;
+    ofImage inputGray;
     
     bool toSend = false;
     

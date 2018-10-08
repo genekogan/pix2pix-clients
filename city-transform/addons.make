@@ -1,6 +1,7 @@
 ofxCv
 ofxGui
 ofxHTTP
+ofxHomography
 ofxIO
 ofxMediaType
 ofxNetworkUtils
@@ -9,3 +10,4 @@ ofxPoco
 ofxRunway
 ofxSSLManager
 ofxSandboxTracker
+ofxXmlSettings

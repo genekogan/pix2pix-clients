@@ -63,6 +63,11 @@ void ofApp::setup() {
 //    runway.start();
 }
 
+//--------------------------------------------------------------
+void ofApp::exit() {
+    sandbox.saveSettings();
+}
+
 void ofApp::update(){
     sandbox.setThreshold(ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 255));
     
@@ -104,18 +109,6 @@ void ofApp::updateSandbox(){
     input.resize(width, height);
 }
 
-
-/*
-void ofApp::receivedFromRunway() {
-    ofLog() << "received from runway";
-    
-    ofPixels p2;
-    ofLoadImage(p2, ofBuffer(runway.getOutputBuffer().getCharPtr(), runway.getOutputBuffer().size()));
-    output.setFromPixels(p2);  // <-- CRASHING!
-    
-    isReady = true;
-}*/
-
 void ofApp::draw() {
     ofBackgroundGradient(ofColor::white, ofColor::black);
 
@@ -137,7 +130,6 @@ void ofApp::draw() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     sandbox.keyEvent(key);
-
 
     if (key==' '){
         debug = !debug;

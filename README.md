@@ -5,6 +5,7 @@ Requirements:
 * [ofxRunway](https://github.com/genekogan/ofxRunway)
 * [ofxCanvas](https://github.com/genekogan/ofxCanvas)
 * [ofxSandboxTracker](https://github.com/genekogan/ofxSandboxTracker)
+* [ofxHomography](https://github.com/paulobarcelos/ofxHomography)
 * [ofxCv](https://github.com/kylemcdonald/ofxCv)
 * [ofxHTTP](https://github.com/bakercp/ofxHTTP)
 * [ofxIO](https://github.com/bakercp/ofxIO)

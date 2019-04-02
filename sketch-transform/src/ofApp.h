@@ -21,22 +21,18 @@ public:
     void mouseReleased(int x, int y, int button);
     
     ofxRunway runway;
-    
-    string host;
+
+    ofImage src;
+    ofImage img;
+    ofImage input, output;
+    ofImage inputGray;
+    ofTexture outputTex;
+	ofxCanvas canvas;
+
     int width;
     int height;
-    bool isReady;
     bool debug;
+    bool toSend;
+    bool ready;
     
-    ofImage src;
-    ofImage input, output;
-    
-    ofTexture outputTex;
-
-	ofxCanvas canvas;
-    ofImage inputGray;
-    
-    bool toSend = false;
-    
-    ofImage img;
 };

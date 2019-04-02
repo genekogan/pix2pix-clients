@@ -16,13 +16,19 @@ public:
     void exit() override;
 
     void updateSandbox();
-    
+    void sendToRunway();
+
     void keyPressed(int key) override;
 
     ofxRunway runway;
     ofxSandboxTracker sandbox;
-    
-    string host;
+
+    ofVideoGrabber cam;
+    ofVideoPlayer video;
+    ofImage src;
+    ofImage input, output;
+    ofTexture outputTex;
+
     int numTrackingColors;
     int width;
     int height;
@@ -31,12 +37,4 @@ public:
     int srcMode;
     bool isReady;
     bool debug;
-    
-    ofVideoGrabber cam;
-    ofVideoPlayer video;
-
-    ofImage src;
-    ofImage input, output;
-    
-    ofTexture outputTex;
 };

@@ -9,12 +9,12 @@ void ofApp::setup() {
     ofBackground(0);
 
     //host = "http://d6e64b8d.ngrok.io/infer";
-    host = "http://ba92328c.ngrok.io/infer";
-                   
+    //host = "http://ba92328c.ngrok.io/infer";
+
     width = 1024;
     height = 512;
     debug = true;
-    srcMode = 2;
+    srcMode = 0;
     numTrackingColors = 3;
     isReady = true;
 
@@ -38,7 +38,7 @@ void ofApp::setup() {
         srcWidth = video.getWidth();
         srcHeight = video.getHeight();
     }
-    
+
     // setup cv
     sandbox.setup(srcWidth, srcHeight);
     sandbox.setDebugPosition(0, 0);
@@ -47,20 +47,21 @@ void ofApp::setup() {
     sandbox.setTrackColor(2, ofColor(0, 0, 100));
     sandbox.setTrackColor(3, ofColor(255, 255, 255));
     sandbox.setTrackColor(4, ofColor(0, 0, 0));
-    sandbox.setTrackColor(0, ofColor(255, 0, 0));
-    sandbox.setTrackColor(1, ofColor(10, 255, 10));
-    sandbox.setTrackColor(2, ofColor(0, 0, 255));
-    sandbox.setTrackColor(3, ofColor(255, 255, 255));
-    sandbox.setTrackColor(4, ofColor(0, 0, 0));
+    sandbox.setOutColor(0, ofColor(255, 0, 0));
+    sandbox.setOutColor(1, ofColor(10, 255, 10));
+    sandbox.setOutColor(2, ofColor(0, 0, 255));
+    sandbox.setOutColor(3, ofColor(255, 255, 255));
+    sandbox.setOutColor(4, ofColor(0, 0, 0));
+    sandbox.loadSettings();
 
     // init images
     input.allocate(width, height, OF_IMAGE_COLOR);
     output.allocate(width, height, OF_IMAGE_COLOR);
-    
+
     // setup Runway client
     ofLog::setChannel(std::make_shared<ofxIO::ThreadsafeConsoleLoggerChannel>());
-    runway.setup(host);
-//    runway.start();
+    runway.setup("http://localhost:9000");
+    runway.start();
 }
 
 //--------------------------------------------------------------
@@ -68,15 +69,23 @@ void ofApp::exit() {
     sandbox.saveSettings();
 }
 
+//--------------------------------------------------------------
+void ofApp::sendToRunway() {
+    ofxRunwayBundle bundle;
+    bundle.address = "convert";
+    bundle.images["image"] = input.getPixels();
+    runway.send(bundle);
+}
+
+//--------------------------------------------------------------
 void ofApp::update(){
     sandbox.setThreshold(ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 255));
-    
+
     if (srcMode==0) {
         cam.update();
         if(cam.isFrameNew()) {
             src.setFromPixels(cam.getPixels());
             updateSandbox();
-            runway.send(input.getPixels());
         }
     }
     else if (srcMode==2) {
@@ -84,23 +93,26 @@ void ofApp::update(){
         if(video.isFrameNew()) {
             src.setFromPixels(video.getPixels());
             updateSandbox();
-            runway.send(input.getPixels());
         }
     }
     else if (srcMode == 0) {
         updateSandbox();
-        runway.send(input.getPixels());
     }
-    
-    
-    ofPixels processedPixels;
-    while (runway.tryReceive(processedPixels)) {
+
+    if (sandbox.isMotionTripped()) {
+        sendToRunway();
+    }
+
+    ofxRunwayBundle bundleToReceive;
+    while (runway.tryReceive(bundleToReceive)) {
+        ofPixels processedPixels = bundleToReceive.images["output"];
         outputTex.loadData(processedPixels);
     }
 
     ofSetWindowTitle(ofToString(ofGetFrameRate()));
 }
 
+//--------------------------------------------------------------
 void ofApp::updateSandbox(){
     ofPixels inputPixels;
     sandbox.update(src);
@@ -109,6 +121,7 @@ void ofApp::updateSandbox(){
     input.resize(width, height);
 }
 
+//--------------------------------------------------------------
 void ofApp::draw() {
     ofBackgroundGradient(ofColor::white, ofColor::black);
 
@@ -120,11 +133,13 @@ void ofApp::draw() {
         input.draw(width, 0);
         src.draw(0, 0);
     }*/
-    
+
     //src.draw(0, 0);
     sandbox.drawDebug();
-    
-    outputTex.draw(300, 0+height);
+
+    if (outputTex.isAllocated()) {
+      outputTex.draw(50+width, 50+height);
+    }
 }
 
 //--------------------------------------------------------------
@@ -135,4 +150,3 @@ void ofApp::keyPressed(int key){
         debug = !debug;
     }
 }
-

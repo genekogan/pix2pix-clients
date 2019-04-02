@@ -1,13 +1,13 @@
 ofxCv
 ofxGui
 ofxHTTP
-ofxHomography
 ofxIO
 ofxMediaType
 ofxNetworkUtils
 ofxOpenCv
 ofxPoco
-ofxRunway
-ofxSSLManager
 ofxSandboxTracker
+ofxSSLManager
+ofxHomography
+ofxRunway
 ofxXmlSettings

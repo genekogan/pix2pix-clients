@@ -60,7 +60,7 @@ void ofApp::setup() {
 
     // setup Runway client
     ofLog::setChannel(std::make_shared<ofxIO::ThreadsafeConsoleLoggerChannel>());
-    runway.setup("http://localhost:9000");
+    runway.setup("http://localhost:8000");
     runway.start();
 }
 
@@ -105,6 +105,7 @@ void ofApp::update(){
 
     ofxRunwayBundle bundleToReceive;
     while (runway.tryReceive(bundleToReceive)) {
+        cout << "RECEIVE " << endl;
         ofPixels processedPixels = bundleToReceive.images["output"];
         outputTex.loadData(processedPixels);
     }
@@ -135,10 +136,18 @@ void ofApp::draw() {
     }*/
 
     //src.draw(0, 0);
-    sandbox.drawDebug();
+    if (debug) {
+        sandbox.drawDebug();
 
-    if (outputTex.isAllocated()) {
-      outputTex.draw(50+width, 50+height);
+        if (outputTex.isAllocated()) {
+            outputTex.draw(50+width, 50+height);
+        }
+    }
+
+    else {
+        if (outputTex.isAllocated()) {
+            outputTex.draw(50, 50, ofGetWidth()-100, ofGetHeight()-100);
+        }
     }
 }
 

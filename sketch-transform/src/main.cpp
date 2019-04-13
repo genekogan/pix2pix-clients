@@ -3,11 +3,36 @@
 
 //========================================================================
 int main( ){
-	ofSetupOpenGL(1024,768,OF_WINDOW);			// <-------- setup the GL context
+//	ofSetupOpenGL(1024,768,OF_WINDOW);			// <-------- setup the GL context
 
 	// this kicks off the running of my app
 	// can be OF_WINDOW or OF_FULLSCREEN
 	// pass in width and height too:
-	ofRunApp(new ofApp());
+//	ofRunApp(new ofApp());
+
+
+	ofGLFWWindowSettings settings;
+    settings.setSize(1920, 1080);
+	settings.setPosition(ofVec2f(0, 0));
+	settings.resizable = true;
+	shared_ptr<ofAppBaseWindow> mainWindow = ofCreateWindow(settings);
+	mainWindow->setFullscreen(true);
+
+    settings.setSize(2560, 1440);
+//    settings.setSize(1440, 810);
+	settings.setPosition(ofVec2f(1*1920+1*2560,0));
+	settings.resizable = true;
+	settings.shareContextWith = mainWindow;	
+	shared_ptr<ofAppBaseWindow> presentWindow = ofCreateWindow(settings);
+	presentWindow->setVerticalSync(false);
+	presentWindow->setFullscreen(true);
+
+	shared_ptr<ofApp> mainApp(new ofApp);
+	mainApp->setupMain();
+	ofAddListener(presentWindow->events().draw,mainApp.get(),&ofApp::drawMain);
+
+
+	ofRunApp(mainWindow, mainApp);
+	ofRunMainLoop();
 
 }

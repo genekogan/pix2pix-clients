@@ -1,6 +1,9 @@
 #include "ofMain.h"
 #include "ofApp.h"
 
+
+#define PRESENT
+
 //========================================================================
 int main( ){
 //	ofSetupOpenGL(1024,768,OF_WINDOW);			// <-------- setup the GL context
@@ -16,21 +19,26 @@ int main( ){
 	settings.setPosition(ofVec2f(0, 0));
 	settings.resizable = true;
 	shared_ptr<ofAppBaseWindow> mainWindow = ofCreateWindow(settings);
-	mainWindow->setFullscreen(true);
+	//mainWindow->setFullscreen(true);
 
     settings.setSize(2560, 1440);
 //    settings.setSize(1440, 810);
 	settings.setPosition(ofVec2f(1*1920+1*2560,0));
 	settings.resizable = true;
 	settings.shareContextWith = mainWindow;	
-	shared_ptr<ofAppBaseWindow> presentWindow = ofCreateWindow(settings);
-	presentWindow->setVerticalSync(false);
-	presentWindow->setFullscreen(true);
-
-	shared_ptr<ofApp> mainApp(new ofApp);
+	
+#ifdef PRESENT
+    shared_ptr<ofAppBaseWindow> presentWindow = ofCreateWindow(settings);
+    presentWindow->setVerticalSync(false);
+    presentWindow->setFullscreen(true);
+#endif
+	
+    shared_ptr<ofApp> mainApp(new ofApp);
 	mainApp->setupMain();
-	ofAddListener(presentWindow->events().draw,mainApp.get(),&ofApp::drawMain);
-
+	
+#ifdef PRESENT
+    ofAddListener(presentWindow->events().draw,mainApp.get(),&ofApp::drawMain);
+#endif
 
 	ofRunApp(mainWindow, mainApp);
 	ofRunMainLoop();

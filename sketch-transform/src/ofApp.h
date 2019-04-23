@@ -6,6 +6,9 @@
 #include "ofxCanvas.h"
 #include "ofxHTTP.h"
 #include "ofxRunway.h"
+#include "Faves.h"
+
+#define TEST_MODE
 
 
 class ofApp : public ofBaseApp{
@@ -14,11 +17,8 @@ public:
     void update();
     void draw();
 
-
-        void setupMain();
-    		void drawMain(ofEventArgs & args);
-
-
+    void setupMain();
+    void drawMain(ofEventArgs & args);
     
     void drawDebug();
     void drawPresent();
@@ -58,6 +58,27 @@ public:
 
 
 
+    
+    vector<ofParameter<bool> > checkpoints;
+    int selected=-1;
+    
+    void checkpointSelected(bool & b) {
+        cout << "CHCK! " << selected << endl;
+        for (int i=0; i<checkpoints.size(); i++) {
+            if (checkpoints[i] && (i != selected)) {
+                selected = i;
+            }
+        }
+        for (int i=0; i<checkpoints.size(); i++) {
+            if (selected != i) {
+                checkpoints[i].disableEvents();
+                checkpoints[i].set(false);
+                checkpoints[i].enableEvents();
+                
+            }
+        }
+    }
+    
     void touchMoved(int x, int y, int id) {
       cout << "TM " << x << "  "<< y << endl;
     }
@@ -65,7 +86,6 @@ public:
 
     void saveFavorite();
 
-    vector<ofImage> favorites;
-    
+    Favorites faves;
 
 };

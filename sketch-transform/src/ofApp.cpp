@@ -9,17 +9,23 @@ using namespace ofxCv;
 //--------------------------------------------------------------
 void ofApp::setupMain(){
 	ofSetBackgroundColor(0);
+    ofSetFrameRate(60);
 }
 
 //--------------------------------------------------------------
 void ofApp::drawMain(ofEventArgs & args){
-    drawPresent();
+    //drawPresent();
+    ofBackground(0);
+    faves.drawPresent();
 }
 
 //--------------------------------------------------------------
 void ofApp::setup(){
     //ofSetWindowShape(1920, 1080);
-    ofSetFullscreen(true);
+    
+    //ofSetFullscreen(true);
+    ofSetFrameRate(60);
+    
     //ofSetVerticalSync(true);
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetFrameRate(60);
@@ -63,16 +69,34 @@ void ofApp::setup(){
     gui.setup();
     gui.setName("sketch-transform");
     gui.add(epoch.set("epoch", 1, 1, 12));
-    gui.setPosition(10, 920);
+    gui.setPosition(10, 720);
+    
+    
+    
+    
+    ofDirectory dir("/Users/gene/Learn/MLJS/ml5-examples/p5js/");
+    int n = dir.listDir();
+    
+    for (int i=0; i<n; i++) {
+         if (dir.getFile(i).isDirectory()){
+             string checkpoint = dir.getFile(i).getFileName();
+             ofParameter<bool> cp;
+             cp.addListener(this, &ofApp::checkpointSelected);
+             cp.set(checkpoint, false);
+             checkpoints.push_back(cp);
+             gui.add(cp);
+         }
+    }
+    
 }
 
 //--------------------------------------------------------------
-void ofApp::update(){    
+void ofApp::update(){
     canvas.getCanvas().readToPixels(input);
     input.update();
 
     if (canvas.isFrameNew()) {
-        toSend = true;
+        //toSend = true;
     }
 
     if (toSend && ready) {
@@ -120,9 +144,19 @@ void ofApp::epochChanged(int & e) {
 
 //--------------------------------------------------------------
 void ofApp::saveFavorite() {
-    ofImage fave;
-    output.readToPixels(fave);
-    favorites.push_back(fave);    
+#ifdef TEST_MODE
+    ofFbo fbo;
+    fbo.allocate(width, height);
+    fbo.begin();
+    ofClear(0, 0);
+    ofBackground(ofRandom(255), ofRandom(255), ofRandom(255));
+    ofDrawBitmapString(ofGetTimestampString(), width/2, height/2);
+    fbo.end();
+    faves.add(&fbo.getTexture());
+#endif
+#ifndef TEST_MODE
+    faves.add(&output);
+#endif
 }
 
 //--------------------------------------------------------------
@@ -163,7 +197,7 @@ void ofApp::drawPresent(){
 
     // }
 
-    int w = ofGetWidth()-20;
+    int w = ofGetWidth() - 20;
     int h = int(float(w) / (output.getWidth() / output.getHeight()));
 
     if (output.isAllocated()) {
@@ -175,39 +209,61 @@ void ofApp::drawPresent(){
 void ofApp::drawFavorites(){
     ofBackground(0);
     
-    for (int f=0; f<favorites.size(); f++) {
-        float x = 10 + (f%3) * 370;
-        float y = 10 + int(f/3) * 190;
-        favorites[f].draw(x, y, 360, 180);
-    }
+    //faves.drawPresent();
+    faves.draw();
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     if (key==' ') {
-        mode = (mode + 1) % 3;
+        //mode = (mode + 1) % 3;
+        mode = 2-mode;
     }    
     else if (key == 'f') {
         saveFavorite();
     }
+    
+    else if (key == OF_KEY_LEFT) {
+        faves.prevPage();
+    }
+    else if (key == OF_KEY_RIGHT) {
+        faves.nextPage();
+    }
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-    canvas.mouseMoved(x, y);
+    if (mode == 0) {
+        canvas.mouseMoved(x, y);
+    } else if (mode == 2) {
+        faves.mouseMoved(x, y);
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-    canvas.mouseDragged(x, y);
+    if (mode == 0) {
+        canvas.mouseDragged(x, y);
+    } else if (mode == 2) {
+        faves.mouseDragged(x, y);
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    canvas.mousePressed(x, y);
+    if (mode == 0) {
+        canvas.mousePressed(x, y);
+    } else if (mode == 2) {
+        faves.mousePressed(x, y);
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-    canvas.mouseReleased(x, y);
+    if (mode == 0) {
+        canvas.mouseReleased(x, y);
+    } else if (mode == 2) {
+        faves.mouseReleased(x, y);
+    }
 }

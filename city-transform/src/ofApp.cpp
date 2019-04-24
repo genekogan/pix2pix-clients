@@ -2,10 +2,17 @@
 
 
 void ofApp::setup() {
+
+    bFullscreen2 = false;
+
+    ofSetWindowPosition(0, 0);
     ofSetWindowShape(1920, 1080);
     ofSetVerticalSync(true);
+
+    ofSetFullscreen(true);
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetFrameRate(60);
+
     ofBackground(0);
 
     //host = "http://d6e64b8d.ngrok.io/infer";
@@ -60,7 +67,7 @@ void ofApp::setup() {
 
     // setup Runway client
     ofLog::setChannel(std::make_shared<ofxIO::ThreadsafeConsoleLoggerChannel>());
-    runway.setup("http://localhost:8000");
+    runway.setup("http://localhost:8759");
     runway.start();
 }
 
@@ -79,6 +86,20 @@ void ofApp::sendToRunway() {
 
 //--------------------------------------------------------------
 void ofApp::update(){
+
+    if(!bFullscreen2){
+        float t = ofGetElapsedTimef();
+        if (t > 3) {
+            cout << "gozzrwewerzz " << endl;
+            ofSetFullscreen(false);
+            ofSetFullscreen(true);
+            bFullscreen2 = true;
+        }
+    }
+
+
+
+
     sandbox.setThreshold(ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 255));
 
     if (srcMode==0) {
@@ -157,5 +178,9 @@ void ofApp::keyPressed(int key){
 
     if (key==' '){
         debug = !debug;
+    }
+
+    if (key=='z') {
+        ofSetFullscreen(true);
     }
 }

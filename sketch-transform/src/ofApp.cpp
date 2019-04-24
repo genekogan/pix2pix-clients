@@ -5,26 +5,14 @@ using namespace cv;
 using namespace ofxCv;
 
 
-
-//--------------------------------------------------------------
-void ofApp::setupMain(){
-	ofSetBackgroundColor(0);
-    ofSetFrameRate(60);
-}
-
-//--------------------------------------------------------------
-void ofApp::drawMain(ofEventArgs & args){
-    //drawPresent();
-    ofBackground(0);
-    faves.drawPresent();
-}
-
 //--------------------------------------------------------------
 void ofApp::setup(){
     //ofSetWindowShape(1920, 1080);
     
-    //ofSetFullscreen(true);
     ofSetFrameRate(60);
+
+    bFullscreen1 = false;
+    bFullscreen2 = false;
     
     //ofSetVerticalSync(true);
     ofSetLogLevel(OF_LOG_VERBOSE);
@@ -61,7 +49,7 @@ void ofApp::setup(){
 
     // setup Runway client
     ofLog::setChannel(std::make_shared<ofxIO::ThreadsafeConsoleLoggerChannel>());
-    runway.setup("http://localhost:8001");
+    runway.setup("http://localhost:8651");
     runway.start();
 
     // setup gui
@@ -90,13 +78,35 @@ void ofApp::setup(){
     
 }
 
+
+
+//--------------------------------------------------------------
+void ofApp::setupMain(){
+	ofSetBackgroundColor(0);
+    ofSetFrameRate(60);
+}
+
+
+
 //--------------------------------------------------------------
 void ofApp::update(){
+
+
+    if(!bFullscreen1){
+        float t = ofGetElapsedTimef();
+        if (t > 1) {
+            cout << "gssso " << endl;
+            //ofSetFullscreen(false);
+            ofSetFullscreen(true);
+            bFullscreen1 = true;
+        }
+    }
+
     canvas.getCanvas().readToPixels(input);
     input.update();
 
     if (canvas.isFrameNew()) {
-        //toSend = true;
+        toSend = true;
     }
 
     if (toSend && ready) {
@@ -139,7 +149,7 @@ void ofApp::setModel(string model_name, int which_epoch) {
 
 //--------------------------------------------------------------
 void ofApp::epochChanged(int & e) {
-    setModel("sk_landscape_0060_64", int(10 * epoch));
+    //setModel("sk_landscape_0060_64", int(10 * epoch));
 }
 
 //--------------------------------------------------------------
@@ -171,6 +181,34 @@ void ofApp::draw(){
         drawFavorites();
     }
 }
+
+//--------------------------------------------------------------
+void ofApp::drawMain(ofEventArgs & args){
+
+
+
+    if(!bFullscreen2){
+        float t = ofGetElapsedTimef();
+        if (t > 1) {
+            cout << "gozzzz " << endl;
+            //ofSetFullscreen(false);
+            ofSetFullscreen(true);
+            bFullscreen2 = true;
+        }
+    }
+    
+    ofBackground(0);
+    if (mode == 0) {
+        drawPresent();
+    }
+    else if (mode == 1) {
+        drawPresent();
+    }
+    else if (mode == 2) {
+        faves.drawPresent();
+    }
+}
+
 
 //--------------------------------------------------------------
 void ofApp::drawDebug(){

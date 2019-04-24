@@ -87,5 +87,5 @@ public:
     void saveFavorite();
 
     Favorites faves;
-
+bool bFullscreen1, bFullscreen2;
 };

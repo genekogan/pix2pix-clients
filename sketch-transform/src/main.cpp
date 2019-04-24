@@ -16,21 +16,21 @@ int main( ){
 
 	ofGLFWWindowSettings settings;
     settings.setSize(1920, 1080);
-	settings.setPosition(ofVec2f(0, 0));
+	settings.setPosition(ofVec2f(3840*2, 0));
 	settings.resizable = true;
 	shared_ptr<ofAppBaseWindow> mainWindow = ofCreateWindow(settings);
-	//mainWindow->setFullscreen(true);
+//	mainWindow->setFullscreen(true);
 
     settings.setSize(2560, 1440);
 //    settings.setSize(1440, 810);
-	settings.setPosition(ofVec2f(1*1920+1*2560,0));
+	settings.setPosition(ofVec2f(3840,0));
 	settings.resizable = true;
 	settings.shareContextWith = mainWindow;	
 	
 #ifdef PRESENT
     shared_ptr<ofAppBaseWindow> presentWindow = ofCreateWindow(settings);
     presentWindow->setVerticalSync(false);
-    presentWindow->setFullscreen(true);
+  //  presentWindow->setFullscreen(true);
 #endif
 	
     shared_ptr<ofApp> mainApp(new ofApp);

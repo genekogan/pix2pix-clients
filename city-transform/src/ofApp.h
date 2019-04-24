@@ -37,4 +37,7 @@ public:
     int srcMode;
     bool isReady;
     bool debug;
+
+
+    bool bFullscreen2;
 };

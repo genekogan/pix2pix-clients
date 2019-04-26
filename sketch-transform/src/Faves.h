@@ -24,6 +24,7 @@ public:
 class FavoritesThumbnail : public ofxClickable {
 public:
     void load(string path);
+    void save(string path);
     void buttonClicked();
 protected:
     FaveButtonSettings settings;

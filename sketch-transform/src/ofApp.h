@@ -8,7 +8,7 @@
 #include "ofxRunway.h"
 #include "Faves.h"
 
-#define TEST_MODE
+//#define TEST_MODE
 
 
 class ofApp : public ofBaseApp{

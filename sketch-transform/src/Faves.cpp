@@ -11,6 +11,12 @@ void FavoritesThumbnail::load(string path) {
 }
 
 //--------------------------------------------------------------
+void FavoritesThumbnail::save(string path) {
+    thumb.save(path);
+    settings.path = path;
+}
+
+//--------------------------------------------------------------
 void FavoritesThumbnail::buttonClicked() {
     static FaveButtonEvent newEvent;
     newEvent.settings = settings;
@@ -110,6 +116,7 @@ void Favorites::add(ofTexture * texture) {
     string newPath = "favorites/favorites"+ofGetTimestampString()+".png";
     newFave.save(newPath);
     paths.push_back(newPath);
+    ofLog() << "new path "<<newPath;
     int pIdx = paths.size()-1;
     p2 = min((int) paths.size(), (page + 1) * nc * nr);
     if (pIdx >= p1 && pIdx < p2) {

@@ -1,3 +1,4 @@
+ofxClickable
 ofxCanvas
 ofxCv
 ofxGui

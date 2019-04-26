@@ -1,18 +1,39 @@
 #include "ofMain.h"
+#include "ofxClickable.h"
 
-#include "FaveButtonSettings.h"
-#include "FaveButton.h"
-#include "FaveButtonEvent.h"
+//--------------------------------------------------------------
+struct FaveButtonSettings {
+    string path;
+};
 
-
-class Favorites {
-
+//--------------------------------------------------------------
+class FaveButtonEvent : public ofEventArgs {
 public:
+    FaveButtonSettings settings;
+    static ofEvent<FaveButtonEvent> events;
+};
 
+//--------------------------------------------------------------
+class NavigateButton : public ofxClickable {
+public:
+    void buttonClicked() {ofNotifyEvent(clickEvent, this);}
+    ofEvent<void> clickEvent;
+};
+
+//--------------------------------------------------------------
+class FavoritesThumbnail : public ofxClickable {
+public:
+    void load(string path);
+    void buttonClicked();
+protected:
+    FaveButtonSettings settings;
+};
+
+//--------------------------------------------------------------
+class Favorites {
+public:
     Favorites();
-    
     void setup();
-    
     void add(ofTexture * texture);
     void selectMain(int idx);
     void getPaths();
@@ -33,14 +54,18 @@ public:
     void mouseReleased(int x, int y);
 
     void buttonEvent(FaveButtonEvent &e);
+    void prevEvent() {prevPage();}
+    void nextEvent() {nextPage();}
     
 protected:
 
     vector<string> paths;
     vector<FavoritesThumbnail> favorites;
+    NavigateButton prev, next;
+    
     ofImage main;
 
-    int favesW;
+    int favesW, favesH;
     int iw, ih, im;
     int nc, nr;
     int p1, p2;

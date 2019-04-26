@@ -43,7 +43,7 @@ public:
     ofImage input;
 //    ofImage output;
 
-  ofTexture output;
+    ofTexture output;
 
 	ofxCanvas canvas;
 

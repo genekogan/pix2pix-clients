@@ -25,17 +25,18 @@ void FavoritesThumbnail::buttonClicked() {
 
 //--------------------------------------------------------------
 Favorites::Favorites() {
-    setup();
+    
 }
 
 //--------------------------------------------------------------
-void Favorites::setup() {
+void Favorites::setup(int iw_, int ih_, int im_, int marginTop_) {
     favesW = ofGetWidth();
-    favesH = ofGetHeight() - 80;
+    favesH = ofGetHeight() - marginTop;
     
-    iw = 360;
-    ih = 180;
-    im = 20;
+    iw = iw_;
+    ih = ih_;
+    im = im_;
+    marginTop = marginTop_;
     
     nc = int(float(favesW - im) / (iw + im));
     page = -1;
@@ -47,12 +48,13 @@ void Favorites::setup() {
     loadPage(0);
     updateThumbnailPositions();
     
+    font.load("verdana.ttf", 36);
     prev.load("back.png");
     next.load("forward.png");
-    prev.resize(40, 40);
-    next.resize(40, 40);
-    prev.setPosition(10, 5);
-    next.setPosition(80, 5);
+    prev.resize(64, 64);
+    next.resize(64, 64);
+    prev.setPosition(24, 5);
+    next.setPosition(180, 5);
 
     ofAddListener(FaveButtonEvent::events, this, &Favorites::buttonEvent);
     ofAddListener(prev.clickEvent, this, &Favorites::prevEvent);
@@ -133,7 +135,7 @@ void Favorites::updateThumbnailPositions() {
         int ix = f % nc;
         int iy = int(f / nc);
         float x = im + ix * (iw + im);
-        float y = 50 + im + iy * (ih + im);
+        float y = marginTop + im + iy * (ih + im);
         favorites[f].setPosition(x, y);
     }
 }
@@ -142,9 +144,10 @@ void Favorites::updateThumbnailPositions() {
 void Favorites::draw() {
     string pageStr = ofToString(page+1)+"/"+ofToString(nPages);
     
+    ofSetColor(255);
     prev.draw();
     next.draw();
-    ofDrawBitmapString(pageStr, 54, 36);
+    font.drawString(pageStr, 90, 52);
     
     for (int f=0; f<favorites.size(); f++) {
         favorites[f].draw();
@@ -153,8 +156,12 @@ void Favorites::draw() {
 
 //--------------------------------------------------------------
 void Favorites::drawPresent() {
+    
+    int w = ofGetWidth() - 20;
+    int h = int(float(w) / (main.getWidth() / main.getHeight()));
+    
     if (main.isAllocated()) {
-        main.draw(0, 0);
+        main.draw(10, 10, w, h);
     }
 }
 
@@ -162,7 +169,6 @@ void Favorites::drawPresent() {
 void Favorites::buttonEvent(FaveButtonEvent &e) {
     main.load(e.settings.path);
 }
-
 
 //--------------------------------------------------------------
 void Favorites::mouseMoved(int x, int y) {

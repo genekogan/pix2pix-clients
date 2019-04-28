@@ -1,20 +1,10 @@
 #include "ofApp.h"
 
 
-using namespace cv;
-using namespace ofxCv;
-
-
 //--------------------------------------------------------------
 void ofApp::setup(){
     //ofSetWindowShape(1920, 1080);
-    
-    ofSetFrameRate(60);
-
-    bFullscreen1 = false;
-    bFullscreen2 = false;
-    
-    //ofSetVerticalSync(true);
+    ofSetVerticalSync(true);
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetFrameRate(60);
     ofBackground(100);
@@ -24,24 +14,19 @@ void ofApp::setup(){
     mode = 0;
     ready = true;
     toSend = false;
+    bFullscreen1 = false;
+    bFullscreen2 = false;
 
     // setup drawing canvas
     canvas.setup(10, 10, width, height, 100, false);
     canvas.setBackground(ofColor(255));
     canvas.addUndoOption("undo");
-//    canvas.addLineOption("roads", ofColor::black, 1, 10);
-
     canvas.addShapeOption("white", ofColor(255, 255, 255), 1, 300);
-    canvas.addShapeOption("red", ofColor(200, 0, 0), 1, 300);
-    canvas.addShapeOption("organge", ofColor(200, 200, 0), 1, 300);
-    canvas.addShapeOption("teal", ofColor(0, 200, 200), 1, 300);
-    canvas.addShapeOption("purple", ofColor(200, 0, 200), 1, 300);
-    canvas.addShapeOption("green", ofColor(0, 200, 0), 1, 300);
-    canvas.addShapeOption("blue", ofColor(0, 0, 200), 1, 300);
+    canvas.addShapeOption("red", ofColor(255, 0, 0), 1, 300);
+    canvas.addShapeOption("green", ofColor(0, 255, 0), 1, 300);
+    canvas.addShapeOption("blue", ofColor(0, 0, 255), 1, 300);
     canvas.addSlider("size", 0, 1);
     canvas.clear();
-    //img.load("/home/bzion/projects/pix2pixHD/checkpoints/renais_025_025_ngfndf16/web/images/epoch006_input_label.jpg");
-    //canvas.setFromPixels(img.getPixels());
 
     // init images
     input.allocate(width, height, OF_IMAGE_COLOR);
@@ -51,34 +36,40 @@ void ofApp::setup(){
     ofLog::setChannel(std::make_shared<ofxIO::ThreadsafeConsoleLoggerChannel>());
     runway.setup("http://localhost:8651");
     runway.start();
-
+    
     // setup gui
-    epoch.addListener(this, &ofApp::epochChanged);
+    bCkpt_ngf1_30.addListener(this, &ofApp::selectCheckpoint_ngf1_30);
+    bCkpt_ngf1_60.addListener(this, &ofApp::selectCheckpoint_ngf1_60);
+    bCkpt_ngf9_60.addListener(this, &ofApp::selectCheckpoint_ngf9_60);
     gui.setup();
     gui.setName("sketch-transform");
-    gui.add(epoch.set("epoch", 1, 1, 12));
+    gui.add(bCkpt_ngf1_30.setup("ngf1, 30 epochs"));
+    gui.add(bCkpt_ngf1_60.setup("ngf1, 60 epochs"));
+    gui.add(bCkpt_ngf9_60.setup("ngf9, 60 epochs"));
     gui.setPosition(10, 720);
     
+    // nav buttons
+    font.load("verdana.ttf", 36);
+    goToFaves.setString("Faves!");
+    goToFaves.setFont(&font);
+    goToFaves.resize(180, 60);
+    goToFaves.setPosition(ofGetWidth()-220, 5);
+    goToDraw.setString("Draw!");
+    goToDraw.setFont(&font);
+    goToDraw.resize(180, 60);
+    goToDraw.setPosition(ofGetWidth()-220, 5);
+    saveFave.setString("Save!");
+    saveFave.setFont(&font);
+    saveFave.resize(180, 60);
+    saveFave.setPosition(ofGetWidth() - 420, 5);
+    ofAddListener(goToDraw.clickEvent, this, &ofApp::goToDrawScreen);
+    ofAddListener(goToFaves.clickEvent, this, &ofApp::goToFavesScreen);
+    ofAddListener(saveFave.clickEvent, this, &ofApp::saveFavorite);
     
-    
-    
-    ofDirectory dir("/Users/gene/Learn/MLJS/ml5-examples/p5js/");
-    int n = dir.listDir();
-    
-    for (int i=0; i<n; i++) {
-         if (dir.getFile(i).isDirectory()){
-             string checkpoint = dir.getFile(i).getFileName();
-             ofParameter<bool> cp;
-             cp.addListener(this, &ofApp::checkpointSelected);
-             cp.set(checkpoint, false);
-             checkpoints.push_back(cp);
-             gui.add(cp);
-         }
-    }
-    
+    // favorites interface
+    faves.setup(320, 160, 24, 90);
+
 }
-
-
 
 //--------------------------------------------------------------
 void ofApp::setupMain(){
@@ -86,21 +77,9 @@ void ofApp::setupMain(){
     ofSetFrameRate(60);
 }
 
-
-
 //--------------------------------------------------------------
 void ofApp::update(){
-
-
-    if(!bFullscreen1){
-        float t = ofGetElapsedTimef();
-        if (t > 1) {
-            cout << "gssso " << endl;
-            //ofSetFullscreen(false);
-            ofSetFullscreen(true);
-            bFullscreen1 = true;
-        }
-    }
+    fullscreenCheck1();
 
     canvas.getCanvas().readToPixels(input);
     input.update();
@@ -148,11 +127,6 @@ void ofApp::setModel(string model_name, int which_epoch) {
 }
 
 //--------------------------------------------------------------
-void ofApp::epochChanged(int & e) {
-    //setModel("sk_landscape_0060_64", int(10 * epoch));
-}
-
-//--------------------------------------------------------------
 void ofApp::saveFavorite() {
 #ifdef TEST_MODE
     ofFbo fbo;
@@ -175,7 +149,7 @@ void ofApp::draw(){
         drawDebug();
     }
     else if (mode == 1) {
-        drawPresent();
+        drawUserView();
     }
     else if (mode == 2) {
         drawFavorites();
@@ -184,18 +158,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::drawMain(ofEventArgs & args){
-
-
-
-    if(!bFullscreen2){
-        float t = ofGetElapsedTimef();
-        if (t > 1) {
-            cout << "gozzzz " << endl;
-            //ofSetFullscreen(false);
-            ofSetFullscreen(true);
-            bFullscreen2 = true;
-        }
-    }
+    fullscreenCheck2();
     
     ofBackground(0);
     if (mode == 0) {
@@ -208,7 +171,6 @@ void ofApp::drawMain(ofEventArgs & args){
         faves.drawPresent();
     }
 }
-
 
 //--------------------------------------------------------------
 void ofApp::drawDebug(){
@@ -223,17 +185,25 @@ void ofApp::drawDebug(){
 
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate()), 10, 12);
     gui.draw();
+    
+    goToFaves.draw();
+    saveFave.draw();
+}
+
+//--------------------------------------------------------------
+void ofApp::drawUserView(){
+    ofBackground(100);
+    
+    canvas.draw();
+    canvas.drawGui();
+    
+    goToFaves.draw();
+    saveFave.draw();
 }
 
 //--------------------------------------------------------------
 void ofApp::drawPresent(){
     ofBackground(0);
-
-    // int w = output.getWidth();
-    // int h = output.getHeight();
-    // if (float(w)/h > float(ofGetWidth()/ofGetHeight())) {
-
-    // }
 
     int w = ofGetWidth() - 20;
     int h = int(float(w) / (output.getWidth() / output.getHeight()));
@@ -246,21 +216,25 @@ void ofApp::drawPresent(){
 //--------------------------------------------------------------
 void ofApp::drawFavorites(){
     ofBackground(0);
-    
-    //faves.drawPresent();
     faves.draw();
+    goToDraw.draw();
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if (key==' ') {
-        //mode = (mode + 1) % 3;
-        mode = 2-mode;
-    }    
+    if (key=='1') {
+        mode = 0;
+    }
+    if (key=='2') {
+        mode = 1;
+    }
+    if (key=='3') {
+        mode = 2;
+    }
+
     else if (key == 'f') {
         saveFavorite();
     }
-    
     else if (key == OF_KEY_LEFT) {
         faves.prevPage();
     }
@@ -274,8 +248,11 @@ void ofApp::keyPressed(int key){
 void ofApp::mouseMoved(int x, int y ){
     if (mode == 0) {
         canvas.mouseMoved(x, y);
+        goToFaves.mouseMoved(x, y);
+        saveFave.mouseMoved(x, y);
     } else if (mode == 2) {
         faves.mouseMoved(x, y);
+        goToDraw.mouseMoved(x, y);
     }
 }
 
@@ -283,8 +260,11 @@ void ofApp::mouseMoved(int x, int y ){
 void ofApp::mouseDragged(int x, int y, int button){
     if (mode == 0) {
         canvas.mouseDragged(x, y);
+        goToFaves.mouseDragged(x, y);
+        saveFave.mouseDragged(x, y);
     } else if (mode == 2) {
         faves.mouseDragged(x, y);
+        goToDraw.mouseDragged(x, y);
     }
 }
 
@@ -292,8 +272,11 @@ void ofApp::mouseDragged(int x, int y, int button){
 void ofApp::mousePressed(int x, int y, int button){
     if (mode == 0) {
         canvas.mousePressed(x, y);
+        goToFaves.mousePressed(x, y);
+        saveFave.mousePressed(x, y);
     } else if (mode == 2) {
         faves.mousePressed(x, y);
+        goToDraw.mousePressed(x, y);
     }
 }
 
@@ -301,7 +284,32 @@ void ofApp::mousePressed(int x, int y, int button){
 void ofApp::mouseReleased(int x, int y, int button){
     if (mode == 0) {
         canvas.mouseReleased(x, y);
+        goToFaves.mouseReleased(x, y);
+        saveFave.mouseReleased(x, y);
     } else if (mode == 2) {
         faves.mouseReleased(x, y);
+        goToDraw.mouseReleased(x, y);
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::fullscreenCheck1(){
+    if(!bFullscreen1){
+        float t = ofGetElapsedTimef();
+        if (t > 1) {
+            ofSetFullscreen(true);
+            bFullscreen1 = true;
+        }
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::fullscreenCheck2(){
+    if(!bFullscreen2){
+        float t = ofGetElapsedTimef();
+        if (t > 1) {
+            ofSetFullscreen(true);
+            bFullscreen2 = true;
+        }
     }
 }

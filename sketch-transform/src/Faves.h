@@ -34,7 +34,7 @@ protected:
 class Favorites {
 public:
     Favorites();
-    void setup();
+    void setup(int iw_, int ih_, int im_, int marginTop_);
     void add(ofTexture * texture);
     void selectMain(int idx);
     void getPaths();
@@ -63,11 +63,12 @@ protected:
     vector<string> paths;
     vector<FavoritesThumbnail> favorites;
     NavigateButton prev, next;
+    ofTrueTypeFont font;
     
     ofImage main;
 
     int favesW, favesH;
-    int iw, ih, im;
+    int iw, ih, im, marginTop;
     int nc, nr;
     int p1, p2;
     int nPages, page;

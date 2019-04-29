@@ -67,7 +67,7 @@ void ofApp::setup(){
     ofAddListener(saveFave.clickEvent, this, &ofApp::saveFavorite);
     
     // favorites interface
-    faves.setup(320, 160, 24, 90);
+    //faves.setup(320, 160, 24, 90);
 
 }
 

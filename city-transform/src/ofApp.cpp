@@ -96,10 +96,6 @@ void ofApp::update(){
             bFullscreen2 = true;
         }
     }
-
-
-
-
     sandbox.setThreshold(ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 255));
 
     if (srcMode==0) {
@@ -126,7 +122,6 @@ void ofApp::update(){
 
     ofxRunwayBundle bundleToReceive;
     while (runway.tryReceive(bundleToReceive)) {
-        cout << "RECEIVE " << endl;
         ofPixels processedPixels = bundleToReceive.images["output"];
         outputTex.loadData(processedPixels);
     }
@@ -179,8 +174,24 @@ void ofApp::keyPressed(int key){
     if (key==' '){
         debug = !debug;
     }
+}
 
-    if (key=='z') {
-        ofSetFullscreen(true);
-    }
+//--------------------------------------------------------------
+void ofApp::mouseMoved(int x, int y ){
+    sandbox.mouseMoved(x, y);
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseDragged(int x, int y, int button){
+    sandbox.mouseDragged(x, y);
+}
+
+//--------------------------------------------------------------
+void ofApp::mousePressed(int x, int y, int button){
+    sandbox.mousePressed(x, y);
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseReleased(int x, int y, int button){
+    sandbox.mouseReleased(x, y);
 }

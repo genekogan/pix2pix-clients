@@ -10,15 +10,20 @@
 
 class ofApp: public ofBaseApp {
 public:
-    void setup() override;
-    void update() override;
-    void draw() override;
-    void exit() override;
+    void setup();
+    void update();
+    void draw();
+    void exit();
+
+    void drawDebug();
+    void drawPresent();
+
+    void checkFullscreen();
 
     void updateSandbox();
     void sendToRunway();
 
-    void keyPressed(int key) override;
+    void keyPressed(int key);
 
     void mouseMoved(int x, int y );
     void mouseDragged(int x, int y, int button);
@@ -42,7 +47,5 @@ public:
     int srcMode;
     bool isReady;
     bool debug;
-
-
     bool bFullscreen2;
 };

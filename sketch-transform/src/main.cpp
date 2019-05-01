@@ -22,7 +22,9 @@ int main( ){
 
     settings.setSize(2560, 1440);
 //    settings.setSize(1440, 810);
+#ifdef PRESENT
 	settings.setPosition(ofVec2f(3840,0));
+#endif
 	settings.resizable = true;
 	settings.shareContextWith = mainWindow;	
 	

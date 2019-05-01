@@ -157,11 +157,11 @@ void Favorites::draw() {
 //--------------------------------------------------------------
 void Favorites::drawPresent() {
     
-    int w = ofGetWidth() - 20;
-    int h = int(float(w) / (main.getWidth() / main.getHeight()));
-    
     if (main.isAllocated()) {
-        main.draw(10, 10, w, h);
+        int w = ofGetWidth() - 20;
+        int h = int(float(w) / (main.getWidth() / main.getHeight()));
+        int y = int(0.5 * (ofGetHeight() - h));
+        main.draw(10, y, w, h);
     }
 }
 

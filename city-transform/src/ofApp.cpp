@@ -4,19 +4,15 @@
 void ofApp::setup() {
 
     bFullscreen2 = false;
-
     ofSetWindowPosition(0, 0);
     ofSetWindowShape(1920, 1080);
     ofSetVerticalSync(true);
 
-    ofSetFullscreen(true);
+    //ofSetFullscreen(true);
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetFrameRate(60);
 
     ofBackground(0);
-
-    //host = "http://d6e64b8d.ngrok.io/infer";
-    //host = "http://ba92328c.ngrok.io/infer";
 
     width = 1024;
     height = 512;
@@ -72,6 +68,18 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
+void ofApp::checkFullscreen(){
+    if(!bFullscreen2){
+        float t = ofGetElapsedTimef();
+        if (t > 3) {
+            ofSetFullscreen(false);
+            ofSetFullscreen(true);
+            bFullscreen2 = true;
+        }
+    }
+}
+
+//--------------------------------------------------------------
 void ofApp::exit() {
     sandbox.saveSettings();
 }
@@ -87,15 +95,6 @@ void ofApp::sendToRunway() {
 //--------------------------------------------------------------
 void ofApp::update(){
 
-    if(!bFullscreen2){
-        float t = ofGetElapsedTimef();
-        if (t > 3) {
-            cout << "gozzrwewerzz " << endl;
-            ofSetFullscreen(false);
-            ofSetFullscreen(true);
-            bFullscreen2 = true;
-        }
-    }
     sandbox.setThreshold(ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 255));
 
     if (srcMode==0) {
@@ -140,30 +139,34 @@ void ofApp::updateSandbox(){
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-    ofBackgroundGradient(ofColor::white, ofColor::black);
+    checkFullscreen();
 
-    /*
-    if (outputTex.isAllocated()) {
-        outputTex.draw(0, 0+height);
-    }
-    if (input.isAllocated()){
-        input.draw(width, 0);
-        src.draw(0, 0);
-    }*/
-
-    //src.draw(0, 0);
     if (debug) {
-        sandbox.drawDebug();
-
-        if (outputTex.isAllocated()) {
-            outputTex.draw(50+width, 50+height);
-        }
+        drawDebug();
+    } else {
+        drawPresent();
     }
+}
 
-    else {
-        if (outputTex.isAllocated()) {
-            outputTex.draw(50, 50, ofGetWidth()-100, ofGetHeight()-100);
-        }
+//--------------------------------------------------------------
+void ofApp::drawDebug(){
+    ofBackgroundGradient(ofColor(0), ofColor(100));
+
+    sandbox.drawDebug();
+    if (outputTex.isAllocated()) {
+        outputTex.draw(100 + 2*width, 50);
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::drawPresent(){
+    ofBackgroundGradient(ofColor(0), ofColor(100));
+
+    int w = ofGetWidth() - 20;
+    int h = int(float(w) / (outputTex.getWidth() / outputTex.getHeight()));
+
+    if (outputTex.isAllocated()) {
+        outputTex.draw(10, 10, w, h);
     }
 }
 

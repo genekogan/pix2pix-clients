@@ -9,6 +9,8 @@ void ofApp::setup(){
     ofSetFrameRate(60);
     ofBackground(100);
 
+    cWidth = 1800;
+    cHeight = 900;
     width = 1024;
     height = 512;
     mode = 0;
@@ -18,7 +20,7 @@ void ofApp::setup(){
     bFullscreen2 = false;
 
     // setup drawing canvas
-    canvas.setup(10, 10, width, height, 100, false);
+    canvas.setup(10, 10, cWidth, cHeight, 100, false);
     canvas.setBackground(ofColor(255));
     canvas.addUndoOption("undo");
     canvas.addShapeOption("white", ofColor(255, 255, 255), 1, 300);
@@ -38,14 +40,53 @@ void ofApp::setup(){
     runway.start();
     
     // setup gui
-    bCkpt_ngf1_30.addListener(this, &ofApp::selectCheckpoint_ngf1_30);
-    bCkpt_ngf1_60.addListener(this, &ofApp::selectCheckpoint_ngf1_60);
-    bCkpt_ngf9_60.addListener(this, &ofApp::selectCheckpoint_ngf9_60);
+    // bCkpt_ngf1_30.addListener(this, &ofApp::selectCheckpoint_ngf1_30);
+    // bCkpt_ngf1_60.addListener(this, &ofApp::selectCheckpoint_ngf1_60);
+    // bCkpt_ngf9_60.addListener(this, &ofApp::selectCheckpoint_ngf9_60);
+
+
+
+bCkpt_landscape_sk_curated_50_10.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_50_10);
+bCkpt_landscape_sk_curated_50_40.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_50_40);
+bCkpt_landscape_sk_curated_50_80.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_50_80);
+bCkpt_landscape_sk_curated_segcolored_10.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_segcolored_10);
+bCkpt_landscape_sk_curated_segcolored_40.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_segcolored_40);
+bCkpt_landscape_sk_curated_segcolored_70.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_segcolored_70);
+bCkpt_landscape_sk_curated_small_250_50.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_50);
+bCkpt_landscape_sk_curated_small_250_150.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_150);
+bCkpt_landscape_sk_curated_small_250_300.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_300);
+bCkpt_landscape_sk_curated_small_250_400.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_400);
+bCkpt_landscape_sk_curated_small_250_500.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_500);
+bCkpt_landscape_sk_curated_transfer_50_10.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_transfer_50_10);
+bCkpt_landscape_sk_curated_transfer_50_40.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_transfer_50_40);
+bCkpt_landscape_sk_curated_transfer_50_100.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_transfer_50_100);
+
+
     gui.setup();
     gui.setName("sketch-transform");
-    gui.add(bCkpt_ngf1_30.setup("ngf1, 30 epochs"));
-    gui.add(bCkpt_ngf1_60.setup("ngf1, 60 epochs"));
-    gui.add(bCkpt_ngf9_60.setup("ngf9, 60 epochs"));
+
+gui.add(bCkpt_landscape_sk_curated_50_10.setup("bCkpt_landscape_sk_curated_50_10"));
+gui.add(bCkpt_landscape_sk_curated_50_40.setup("bCkpt_landscape_sk_curated_50_40"));
+gui.add(bCkpt_landscape_sk_curated_50_80.setup("bCkpt_landscape_sk_curated_50_80"));
+gui.add(bCkpt_landscape_sk_curated_segcolored_10.setup("bCkpt_landscape_sk_curated_segcolored_10"));
+gui.add(bCkpt_landscape_sk_curated_segcolored_40.setup("bCkpt_landscape_sk_curated_segcolored_40"));
+gui.add(bCkpt_landscape_sk_curated_segcolored_70.setup("bCkpt_landscape_sk_curated_segcolored_70"));
+gui.add(bCkpt_landscape_sk_curated_small_250_50.setup("bCkpt_landscape_sk_curated_small_250_50"));
+gui.add(bCkpt_landscape_sk_curated_small_250_150.setup("bCkpt_landscape_sk_curated_small_250_150"));
+gui.add(bCkpt_landscape_sk_curated_small_250_300.setup("bCkpt_landscape_sk_curated_small_250_300"));
+gui.add(bCkpt_landscape_sk_curated_small_250_400.setup("bCkpt_landscape_sk_curated_small_250_400"));
+gui.add(bCkpt_landscape_sk_curated_small_250_500.setup("bCkpt_landscape_sk_curated_small_250_500"));
+gui.add(bCkpt_landscape_sk_curated_transfer_50_10.setup("bCkpt_landscape_sk_curated_transfer_50_10"));
+gui.add(bCkpt_landscape_sk_curated_transfer_50_40.setup("bCkpt_landscape_sk_curated_transfer_50_40"));
+gui.add(bCkpt_landscape_sk_curated_transfer_50_100.setup("bCkpt_landscape_sk_curated_transfer_50_100"));
+
+    // gui.add(bCkpt_ngf1_30.setup("ngf1, 30 epochs"));
+    // gui.add(bCkpt_ngf1_60.setup("ngf1, 60 epochs"));
+    // gui.add(bCkpt_ngf9_60.setup("ngf9, 60 epochs"));
+
+
+
+
     gui.setPosition(10, 720);
     
     // nav buttons
@@ -91,6 +132,7 @@ void ofApp::update(){
     if (toSend && ready) {
         sendToRunway();
         toSend = false;
+        toSendManual = false;
     }
 
     receiveFromRunway();
@@ -99,8 +141,11 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::sendToRunway(){
     ofxRunwayBundle bundle;
+    ofImage outputImage;
+    outputImage.setFromPixels(input.getPixels());
+    outputImage.resize(width, height);
     bundle.address = "convert";
-    bundle.images["image"] = input.getPixels();
+    bundle.images["image"] = outputImage.getPixels();
     runway.send(bundle);
     ready = false;
 }
@@ -110,7 +155,6 @@ void ofApp::receiveFromRunway(){
     ofxRunwayBundle bundleToReceive;
     while (runway.tryReceive(bundleToReceive)) {
         ofPixels processedPixels = bundleToReceive.images["output"];
-        //output.setFromPixels(processedPixels);
         output.loadData(processedPixels);
         ready = true;
     }
@@ -204,12 +248,11 @@ void ofApp::drawUserView(){
 //--------------------------------------------------------------
 void ofApp::drawPresent(){
     ofBackground(0);
-
-    int w = ofGetWidth() - 20;
-    int h = int(float(w) / (output.getWidth() / output.getHeight()));
-
     if (output.isAllocated()) {
-        output.draw(10, 10, w, h);
+        int w = ofGetWidth() - 20;
+        int h = int(float(w) / (output.getWidth() / output.getHeight()));
+        int y = int(0.5 * (ofGetHeight() - h));
+        output.draw(10, y, w, h);
     }
 }
 
@@ -231,7 +274,7 @@ void ofApp::keyPressed(int key){
     if (key=='3') {
         mode = 2;
     }
-
+/*
     else if (key == 'f') {
         saveFavorite();
     }
@@ -242,11 +285,15 @@ void ofApp::keyPressed(int key){
         faves.nextPage();
     }
 
+    if (key==' '){
+        toSendManual = true;
+    }
+*/
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-    if (mode == 0) {
+    if (mode == 0 || mode == 1) {
         canvas.mouseMoved(x, y);
         goToFaves.mouseMoved(x, y);
         saveFave.mouseMoved(x, y);
@@ -258,7 +305,7 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-    if (mode == 0) {
+    if (mode == 0 || mode == 1) {
         canvas.mouseDragged(x, y);
         goToFaves.mouseDragged(x, y);
         saveFave.mouseDragged(x, y);
@@ -270,7 +317,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    if (mode == 0) {
+    if (mode == 0 || mode == 1) {
         canvas.mousePressed(x, y);
         goToFaves.mousePressed(x, y);
         saveFave.mousePressed(x, y);
@@ -282,7 +329,7 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-    if (mode == 0) {
+    if (mode == 0 || mode == 1) {
         canvas.mouseReleased(x, y);
         goToFaves.mouseReleased(x, y);
         saveFave.mouseReleased(x, y);

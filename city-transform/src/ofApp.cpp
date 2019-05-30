@@ -14,8 +14,8 @@ void ofApp::setup() {
 
     ofBackground(0);
 
-    width = 1024;
-    height = 512;
+    width = 512;//1024;
+    height = 256;//512;
     debug = true;
     srcMode = 0;
     numTrackingColors = 3;
@@ -139,7 +139,7 @@ void ofApp::updateSandbox(){
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-    checkFullscreen();
+    //checkFullscreen();
 
     if (debug) {
         drawDebug();

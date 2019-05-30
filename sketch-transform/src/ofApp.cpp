@@ -9,9 +9,9 @@ void ofApp::setup(){
     ofSetFrameRate(60);
     ofBackground(100);
 
-    cWidth = 1800;
+    cWidth = 900;//1800;
     cHeight = 900;
-    width = 1024;
+    width = 512; //1024
     height = 512;
     mode = 0;
     ready = true;
@@ -23,10 +23,30 @@ void ofApp::setup(){
     canvas.setup(10, 10, cWidth, cHeight, 100, false);
     canvas.setBackground(ofColor(255));
     canvas.addUndoOption("undo");
-    canvas.addShapeOption("white", ofColor(255, 255, 255), 1, 300);
-    canvas.addShapeOption("red", ofColor(255, 0, 0), 1, 300);
-    canvas.addShapeOption("green", ofColor(0, 255, 0), 1, 300);
-    canvas.addShapeOption("blue", ofColor(0, 0, 255), 1, 300);
+
+
+    // canvas.addShapeOption("white", ofColor(255, 255, 255), 1, 300);
+    // canvas.addShapeOption("red", ofColor(255, 0, 0), 1, 300);
+    // canvas.addShapeOption("green", ofColor(0, 255, 0), 1, 300);
+    // canvas.addShapeOption("blue", ofColor(0, 0, 255), 1, 300);
+
+
+
+canvas.addShapeOption("bush", ofColor(30, 190, 180), 1, 300);
+canvas.addShapeOption("grass", ofColor(255, 255, 255), 1, 300);
+canvas.addShapeOption("ground-other", ofColor(60, 120, 60), 1, 300);
+canvas.addShapeOption("house", ofColor(120, 30, 30), 1, 300);
+canvas.addShapeOption("clouds", ofColor(40, 40, 40), 1, 300);
+canvas.addShapeOption("mountain", ofColor(200, 200, 200), 1, 300);
+canvas.addShapeOption("plant-other", ofColor(0, 255, 0), 1, 300);
+canvas.addShapeOption("river", ofColor(0, 60, 180), 1, 300);
+canvas.addShapeOption("rock", ofColor(150, 150, 150), 1, 300);
+canvas.addShapeOption("sea", ofColor(0, 0, 100), 1, 300);
+canvas.addShapeOption("sky-other", ofColor(40, 60, 255), 1, 300);
+canvas.addShapeOption("tree", ofColor(0, 0, 255), 1, 300);
+canvas.addShapeOption("water-other", ofColor(0, 0, 185), 1, 300);
+
+
     canvas.addSlider("size", 0, 1);
     canvas.clear();
 
@@ -249,7 +269,7 @@ void ofApp::drawUserView(){
 void ofApp::drawPresent(){
     ofBackground(0);
     if (output.isAllocated()) {
-        int w = ofGetWidth() - 20;
+        int w = int(0.5 * ofGetWidth() - 20);
         int h = int(float(w) / (output.getWidth() / output.getHeight()));
         int y = int(0.5 * (ofGetHeight() - h));
         output.draw(10, y, w, h);

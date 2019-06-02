@@ -20,32 +20,23 @@ void ofApp::setup(){
     bFullscreen2 = false;
 
     // setup drawing canvas
-    canvas.setup(10, 10, cWidth, cHeight, 100, false);
+    canvas.setup(10, 10, cWidth, cHeight, 75, false);
     canvas.setBackground(ofColor(255));
-    canvas.addUndoOption("undo");
+    canvas.addUndoOption("undo", "undo.png");
 
-
-    // canvas.addShapeOption("white", ofColor(255, 255, 255), 1, 300);
-    // canvas.addShapeOption("red", ofColor(255, 0, 0), 1, 300);
-    // canvas.addShapeOption("green", ofColor(0, 255, 0), 1, 300);
-    // canvas.addShapeOption("blue", ofColor(0, 0, 255), 1, 300);
-
-
-
-canvas.addShapeOption("bush", ofColor(30, 190, 180), 1, 300);
-canvas.addShapeOption("grass", ofColor(255, 255, 255), 1, 300);
-canvas.addShapeOption("ground-other", ofColor(60, 120, 60), 1, 300);
-canvas.addShapeOption("house", ofColor(120, 30, 30), 1, 300);
-canvas.addShapeOption("clouds", ofColor(40, 40, 40), 1, 300);
-canvas.addShapeOption("mountain", ofColor(200, 200, 200), 1, 300);
-canvas.addShapeOption("plant-other", ofColor(0, 255, 0), 1, 300);
-canvas.addShapeOption("river", ofColor(0, 60, 180), 1, 300);
-canvas.addShapeOption("rock", ofColor(150, 150, 150), 1, 300);
-canvas.addShapeOption("sea", ofColor(0, 0, 100), 1, 300);
-canvas.addShapeOption("sky-other", ofColor(40, 60, 255), 1, 300);
-canvas.addShapeOption("tree", ofColor(0, 0, 255), 1, 300);
-canvas.addShapeOption("water-other", ofColor(0, 0, 185), 1, 300);
-
+    canvas.addShapeOption("bush", ofColor(30, 190, 180), 1, 300, "plant.png");
+    canvas.addShapeOption("grass", ofColor(255, 255, 255), 1, 300, "grass.png");
+    canvas.addShapeOption("ground-other", ofColor(60, 120, 60), 1, 300, "ground.png");
+    canvas.addShapeOption("house", ofColor(120, 30, 30), 1, 300, "house.png");
+    canvas.addShapeOption("clouds", ofColor(40, 40, 40), 1, 300, "cloud.png");
+    canvas.addShapeOption("mountain", ofColor(200, 200, 200), 1, 300, "mountain.png");
+    canvas.addShapeOption("plant-other", ofColor(0, 255, 0), 1, 300, "plant.png");
+    canvas.addShapeOption("river", ofColor(0, 60, 180), 1, 300, "river.png");
+    canvas.addShapeOption("rock", ofColor(150, 150, 150), 1, 300, "rock.png");
+    canvas.addShapeOption("sea", ofColor(0, 0, 100), 1, 300, "sea.png");
+    canvas.addShapeOption("sky-other", ofColor(40, 60, 255), 1, 300, "sky.png");
+    canvas.addShapeOption("tree", ofColor(0, 0, 255), 1, 300, "tree.png");
+    canvas.addShapeOption("water-other", ofColor(0, 0, 185), 1, 300, "sea.png");
 
     canvas.addSlider("size", 0, 1);
     canvas.clear();
@@ -64,50 +55,38 @@ canvas.addShapeOption("water-other", ofColor(0, 0, 185), 1, 300);
     // bCkpt_ngf1_60.addListener(this, &ofApp::selectCheckpoint_ngf1_60);
     // bCkpt_ngf9_60.addListener(this, &ofApp::selectCheckpoint_ngf9_60);
 
-
-
-bCkpt_landscape_sk_curated_50_10.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_50_10);
-bCkpt_landscape_sk_curated_50_40.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_50_40);
-bCkpt_landscape_sk_curated_50_80.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_50_80);
-bCkpt_landscape_sk_curated_segcolored_10.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_segcolored_10);
-bCkpt_landscape_sk_curated_segcolored_40.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_segcolored_40);
-bCkpt_landscape_sk_curated_segcolored_70.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_segcolored_70);
-bCkpt_landscape_sk_curated_small_250_50.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_50);
-bCkpt_landscape_sk_curated_small_250_150.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_150);
-bCkpt_landscape_sk_curated_small_250_300.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_300);
-bCkpt_landscape_sk_curated_small_250_400.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_400);
-bCkpt_landscape_sk_curated_small_250_500.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_500);
-bCkpt_landscape_sk_curated_transfer_50_10.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_transfer_50_10);
-bCkpt_landscape_sk_curated_transfer_50_40.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_transfer_50_40);
-bCkpt_landscape_sk_curated_transfer_50_100.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_transfer_50_100);
-
+    bCkpt_landscape_sk_curated_50_10.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_50_10);
+    bCkpt_landscape_sk_curated_50_40.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_50_40);
+    bCkpt_landscape_sk_curated_50_80.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_50_80);
+    bCkpt_landscape_sk_curated_segcolored_10.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_segcolored_10);
+    bCkpt_landscape_sk_curated_segcolored_40.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_segcolored_40);
+    bCkpt_landscape_sk_curated_segcolored_70.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_segcolored_70);
+    bCkpt_landscape_sk_curated_small_250_50.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_50);
+    bCkpt_landscape_sk_curated_small_250_150.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_150);
+    bCkpt_landscape_sk_curated_small_250_300.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_300);
+    bCkpt_landscape_sk_curated_small_250_400.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_400);
+    bCkpt_landscape_sk_curated_small_250_500.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_500);
+    bCkpt_landscape_sk_curated_transfer_50_10.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_transfer_50_10);
+    bCkpt_landscape_sk_curated_transfer_50_40.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_transfer_50_40);
+    bCkpt_landscape_sk_curated_transfer_50_100.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_transfer_50_100);
 
     gui.setup();
     gui.setName("sketch-transform");
-
-gui.add(bCkpt_landscape_sk_curated_50_10.setup("bCkpt_landscape_sk_curated_50_10"));
-gui.add(bCkpt_landscape_sk_curated_50_40.setup("bCkpt_landscape_sk_curated_50_40"));
-gui.add(bCkpt_landscape_sk_curated_50_80.setup("bCkpt_landscape_sk_curated_50_80"));
-gui.add(bCkpt_landscape_sk_curated_segcolored_10.setup("bCkpt_landscape_sk_curated_segcolored_10"));
-gui.add(bCkpt_landscape_sk_curated_segcolored_40.setup("bCkpt_landscape_sk_curated_segcolored_40"));
-gui.add(bCkpt_landscape_sk_curated_segcolored_70.setup("bCkpt_landscape_sk_curated_segcolored_70"));
-gui.add(bCkpt_landscape_sk_curated_small_250_50.setup("bCkpt_landscape_sk_curated_small_250_50"));
-gui.add(bCkpt_landscape_sk_curated_small_250_150.setup("bCkpt_landscape_sk_curated_small_250_150"));
-gui.add(bCkpt_landscape_sk_curated_small_250_300.setup("bCkpt_landscape_sk_curated_small_250_300"));
-gui.add(bCkpt_landscape_sk_curated_small_250_400.setup("bCkpt_landscape_sk_curated_small_250_400"));
-gui.add(bCkpt_landscape_sk_curated_small_250_500.setup("bCkpt_landscape_sk_curated_small_250_500"));
-gui.add(bCkpt_landscape_sk_curated_transfer_50_10.setup("bCkpt_landscape_sk_curated_transfer_50_10"));
-gui.add(bCkpt_landscape_sk_curated_transfer_50_40.setup("bCkpt_landscape_sk_curated_transfer_50_40"));
-gui.add(bCkpt_landscape_sk_curated_transfer_50_100.setup("bCkpt_landscape_sk_curated_transfer_50_100"));
-
-    // gui.add(bCkpt_ngf1_30.setup("ngf1, 30 epochs"));
-    // gui.add(bCkpt_ngf1_60.setup("ngf1, 60 epochs"));
-    // gui.add(bCkpt_ngf9_60.setup("ngf9, 60 epochs"));
-
-
-
-
     gui.setPosition(10, 720);
+    gui.add(bCkpt_landscape_sk_curated_50_10.setup("bCkpt_landscape_sk_curated_50_10"));
+    gui.add(bCkpt_landscape_sk_curated_50_40.setup("bCkpt_landscape_sk_curated_50_40"));
+    gui.add(bCkpt_landscape_sk_curated_50_80.setup("bCkpt_landscape_sk_curated_50_80"));
+    gui.add(bCkpt_landscape_sk_curated_segcolored_10.setup("bCkpt_landscape_sk_curated_segcolored_10"));
+    gui.add(bCkpt_landscape_sk_curated_segcolored_40.setup("bCkpt_landscape_sk_curated_segcolored_40"));
+    gui.add(bCkpt_landscape_sk_curated_segcolored_70.setup("bCkpt_landscape_sk_curated_segcolored_70"));
+    gui.add(bCkpt_landscape_sk_curated_small_250_50.setup("bCkpt_landscape_sk_curated_small_250_50"));
+    gui.add(bCkpt_landscape_sk_curated_small_250_150.setup("bCkpt_landscape_sk_curated_small_250_150"));
+    gui.add(bCkpt_landscape_sk_curated_small_250_300.setup("bCkpt_landscape_sk_curated_small_250_300"));
+    gui.add(bCkpt_landscape_sk_curated_small_250_400.setup("bCkpt_landscape_sk_curated_small_250_400"));
+    gui.add(bCkpt_landscape_sk_curated_small_250_500.setup("bCkpt_landscape_sk_curated_small_250_500"));
+    gui.add(bCkpt_landscape_sk_curated_transfer_50_10.setup("bCkpt_landscape_sk_curated_transfer_50_10"));
+    gui.add(bCkpt_landscape_sk_curated_transfer_50_40.setup("bCkpt_landscape_sk_curated_transfer_50_40"));
+    gui.add(bCkpt_landscape_sk_curated_transfer_50_100.setup("bCkpt_landscape_sk_curated_transfer_50_100"));
     
     // nav buttons
     font.load("verdana.ttf", 36);
@@ -129,7 +108,6 @@ gui.add(bCkpt_landscape_sk_curated_transfer_50_100.setup("bCkpt_landscape_sk_cur
     
     // favorites interface
     //faves.setup(320, 160, 24, 90);
-
 }
 
 //--------------------------------------------------------------

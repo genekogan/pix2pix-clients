@@ -1,5 +1,5 @@
-ofxClickable
 ofxCanvas
+ofxClickable
 ofxCv
 ofxGui
 ofxHTTP

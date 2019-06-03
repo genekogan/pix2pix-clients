@@ -14,8 +14,8 @@ void ofApp::setup() {
 
     ofBackground(0);
 
-    width = 512;//1024;
-    height = 256;//512;
+    width = 768;//1024;
+    height = 384;//512;
     debug = true;
     srcMode = 0;
     numTrackingColors = 3;

@@ -24,18 +24,18 @@ void ofApp::setup(){
     canvas.setBackground(ofColor(255));
     canvas.addUndoOption("undo", "undo.png");
 
+    canvas.addShapeOption("ground", ofColor(60, 120, 60), 1, 300, "ground.png");
     canvas.addShapeOption("bush", ofColor(30, 190, 180), 1, 300, "plant.png");
     canvas.addShapeOption("grass", ofColor(255, 255, 255), 1, 300, "grass.png");
-    canvas.addShapeOption("ground-other", ofColor(60, 120, 60), 1, 300, "ground.png");
-    canvas.addShapeOption("house", ofColor(120, 30, 30), 1, 300, "house.png");
+    canvas.addShapeOption("tree", ofColor(0, 0, 255), 1, 300, "tree.png");
+    canvas.addShapeOption("plant-other", ofColor(0, 255, 0), 1, 300, "plant.png");
+    //canvas.addShapeOption("house", ofColor(120, 30, 30), 1, 300, "house.png");
+    canvas.addShapeOption("sky-other", ofColor(40, 60, 255), 1, 300, "sky.png");
     canvas.addShapeOption("clouds", ofColor(40, 40, 40), 1, 300, "cloud.png");
     canvas.addShapeOption("mountain", ofColor(200, 200, 200), 1, 300, "mountain.png");
-    canvas.addShapeOption("plant-other", ofColor(0, 255, 0), 1, 300, "plant.png");
-    canvas.addShapeOption("river", ofColor(0, 60, 180), 1, 300, "river.png");
     canvas.addShapeOption("rock", ofColor(150, 150, 150), 1, 300, "rock.png");
+    //canvas.addShapeOption("river", ofColor(0, 60, 180), 1, 300, "river.png");
     canvas.addShapeOption("sea", ofColor(0, 0, 100), 1, 300, "sea.png");
-    canvas.addShapeOption("sky-other", ofColor(40, 60, 255), 1, 300, "sky.png");
-    canvas.addShapeOption("tree", ofColor(0, 0, 255), 1, 300, "tree.png");
     canvas.addShapeOption("water-other", ofColor(0, 0, 185), 1, 300, "sea.png");
 
     canvas.addSlider("size", 0, 1);

@@ -3,7 +3,8 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    //ofSetWindowShape(1920, 1080);
+    ofSetWindowShape(1920, 1080);
+    
     ofSetVerticalSync(true);
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetFrameRate(60);
@@ -13,32 +14,37 @@ void ofApp::setup(){
     cHeight = 900;
     width = 512; //1024
     height = 512;
-    mode = 0;
+    mode = 1;
     ready = true;
     toSend = false;
     bFullscreen1 = false;
     bFullscreen2 = false;
 
     // setup drawing canvas
-    canvas.setup(10, 10, cWidth, cHeight, 75, false);
+    canvas.setup(160, 130, cWidth, cHeight);
     canvas.setBackground(ofColor(255));
-    canvas.addUndoOption("undo", "undo.png");
+    
+    panelLeft.setup(60, 130, 85, true, &canvas);
+    panelTop.setup(160, 30, 85, false, &canvas);
 
-    canvas.addShapeOption("ground", ofColor(60, 120, 60), 1, 300, "ground.png");
-    canvas.addShapeOption("bush", ofColor(30, 190, 180), 1, 300, "plant.png");
-    canvas.addShapeOption("grass", ofColor(255, 255, 255), 1, 300, "grass.png");
-    canvas.addShapeOption("tree", ofColor(0, 0, 255), 1, 300, "tree.png");
-    canvas.addShapeOption("plant-other", ofColor(0, 255, 0), 1, 300, "plant.png");
-    //canvas.addShapeOption("house", ofColor(120, 30, 30), 1, 300, "house.png");
-    canvas.addShapeOption("sky-other", ofColor(40, 60, 255), 1, 300, "sky.png");
-    canvas.addShapeOption("clouds", ofColor(40, 40, 40), 1, 300, "cloud.png");
-    canvas.addShapeOption("mountain", ofColor(200, 200, 200), 1, 300, "mountain.png");
-    canvas.addShapeOption("rock", ofColor(150, 150, 150), 1, 300, "rock.png");
-    //canvas.addShapeOption("river", ofColor(0, 60, 180), 1, 300, "river.png");
-    canvas.addShapeOption("sea", ofColor(0, 0, 100), 1, 300, "sea.png");
-    canvas.addShapeOption("water-other", ofColor(0, 0, 185), 1, 300, "sea.png");
+    panelLeft.addShapeOption("ground", ofColor(60, 120, 60), 1, 300, "ground.png");
+    panelLeft.addShapeOption("bush", ofColor(30, 190, 180), 1, 300, "plant.png");
+    panelLeft.addShapeOption("grass", ofColor(255, 255, 255), 1, 300, "grass.png");
+    panelLeft.addShapeOption("tree", ofColor(0, 0, 255), 1, 300, "tree.png");
+    panelLeft.addShapeOption("plant-other", ofColor(0, 255, 0), 1, 300, "plant.png");
+    //panelLeft.addShapeOption("house", ofColor(120, 30, 30), 1, 300, "house.png");
+    panelLeft.addShapeOption("sky-other", ofColor(40, 60, 255), 1, 300, "sky.png");
+    panelLeft.addShapeOption("clouds", ofColor(40, 40, 40), 1, 300, "cloud.png");
+    panelLeft.addShapeOption("mountain", ofColor(200, 200, 200), 1, 300, "mountain.png");
+    panelLeft.addShapeOption("rock", ofColor(150, 150, 150), 1, 300, "rock.png");
+    //panelLeft.addShapeOption("river", ofColor(0, 60, 180), 1, 300, "river.png");
+    panelLeft.addShapeOption("sea", ofColor(0, 0, 100), 1, 300, "sea.png");
+    panelLeft.addShapeOption("water-other", ofColor(0, 0, 185), 1, 300, "river.png");
 
-    canvas.addSlider("size", 0, 1);
+    panelTop.addClearOption("clear", "clear.png");
+    panelTop.addUndoOption("undo", "undo.png");
+    panelTop.addSlider("size", 0, 1);
+    
     canvas.clear();
 
     // init images
@@ -50,55 +56,21 @@ void ofApp::setup(){
     runway.setup("http://localhost:8651");
     runway.start();
     
-    // setup gui
-    // bCkpt_ngf1_30.addListener(this, &ofApp::selectCheckpoint_ngf1_30);
-    // bCkpt_ngf1_60.addListener(this, &ofApp::selectCheckpoint_ngf1_60);
-    // bCkpt_ngf9_60.addListener(this, &ofApp::selectCheckpoint_ngf9_60);
+//    gui.setup();
+//    gui.setName("sketch-transform");
+//    gui.setPosition(10, 720);
 
-    bCkpt_landscape_sk_curated_50_10.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_50_10);
-    bCkpt_landscape_sk_curated_50_40.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_50_40);
-    bCkpt_landscape_sk_curated_50_80.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_50_80);
-    bCkpt_landscape_sk_curated_segcolored_10.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_segcolored_10);
-    bCkpt_landscape_sk_curated_segcolored_40.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_segcolored_40);
-    bCkpt_landscape_sk_curated_segcolored_70.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_segcolored_70);
-    bCkpt_landscape_sk_curated_small_250_50.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_50);
-    bCkpt_landscape_sk_curated_small_250_150.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_150);
-    bCkpt_landscape_sk_curated_small_250_300.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_300);
-    bCkpt_landscape_sk_curated_small_250_400.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_400);
-    bCkpt_landscape_sk_curated_small_250_500.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_small_250_500);
-    bCkpt_landscape_sk_curated_transfer_50_10.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_transfer_50_10);
-    bCkpt_landscape_sk_curated_transfer_50_40.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_transfer_50_40);
-    bCkpt_landscape_sk_curated_transfer_50_100.addListener(this, &ofApp::selectCheckpoint_landscape_sk_curated_transfer_50_100);
-
-    gui.setup();
-    gui.setName("sketch-transform");
-    gui.setPosition(10, 720);
-    gui.add(bCkpt_landscape_sk_curated_50_10.setup("bCkpt_landscape_sk_curated_50_10"));
-    gui.add(bCkpt_landscape_sk_curated_50_40.setup("bCkpt_landscape_sk_curated_50_40"));
-    gui.add(bCkpt_landscape_sk_curated_50_80.setup("bCkpt_landscape_sk_curated_50_80"));
-    gui.add(bCkpt_landscape_sk_curated_segcolored_10.setup("bCkpt_landscape_sk_curated_segcolored_10"));
-    gui.add(bCkpt_landscape_sk_curated_segcolored_40.setup("bCkpt_landscape_sk_curated_segcolored_40"));
-    gui.add(bCkpt_landscape_sk_curated_segcolored_70.setup("bCkpt_landscape_sk_curated_segcolored_70"));
-    gui.add(bCkpt_landscape_sk_curated_small_250_50.setup("bCkpt_landscape_sk_curated_small_250_50"));
-    gui.add(bCkpt_landscape_sk_curated_small_250_150.setup("bCkpt_landscape_sk_curated_small_250_150"));
-    gui.add(bCkpt_landscape_sk_curated_small_250_300.setup("bCkpt_landscape_sk_curated_small_250_300"));
-    gui.add(bCkpt_landscape_sk_curated_small_250_400.setup("bCkpt_landscape_sk_curated_small_250_400"));
-    gui.add(bCkpt_landscape_sk_curated_small_250_500.setup("bCkpt_landscape_sk_curated_small_250_500"));
-    gui.add(bCkpt_landscape_sk_curated_transfer_50_10.setup("bCkpt_landscape_sk_curated_transfer_50_10"));
-    gui.add(bCkpt_landscape_sk_curated_transfer_50_40.setup("bCkpt_landscape_sk_curated_transfer_50_40"));
-    gui.add(bCkpt_landscape_sk_curated_transfer_50_100.setup("bCkpt_landscape_sk_curated_transfer_50_100"));
-    
     // nav buttons
     font.load("verdana.ttf", 36);
-    goToFaves.setString("Faves!");
+    goToFaves.setName("Faves!");
     goToFaves.setFont(&font);
     goToFaves.resize(180, 60);
     goToFaves.setPosition(ofGetWidth()-220, 5);
-    goToDraw.setString("Draw!");
+    goToDraw.setName("Draw!");
     goToDraw.setFont(&font);
     goToDraw.resize(180, 60);
     goToDraw.setPosition(ofGetWidth()-220, 5);
-    saveFave.setString("Save!");
+    saveFave.setName("Save!");
     saveFave.setFont(&font);
     saveFave.resize(180, 60);
     saveFave.setPosition(ofGetWidth() - 420, 5);
@@ -108,6 +80,10 @@ void ofApp::setup(){
     
     // favorites interface
     //faves.setup(320, 160, 24, 90);
+    
+    // templates interface
+    loadTemplates();
+    canvas.setFromImage(templates[0]->getName());
 }
 
 //--------------------------------------------------------------
@@ -118,7 +94,7 @@ void ofApp::setupMain(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    fullscreenCheck1();
+    //fullscreenCheck1();
 
     canvas.getCanvas().readToPixels(input);
     input.update();
@@ -186,6 +162,43 @@ void ofApp::saveFavorite() {
 }
 
 //--------------------------------------------------------------
+void ofApp::saveTemplate() {
+    string newPath = "templates/template"+ofGetTimestampString()+".png";
+    input.save(newPath);
+}
+
+//--------------------------------------------------------------
+void ofApp::loadTemplates() {
+    int ctw = 360;
+    int cth = 360;
+    int ctmargin = 25;
+    int ctx0 = canvas.getRectangle().getX() + canvas.getRectangle().getWidth() + 30;;
+    int cty0 = canvas.getRectangle().getY() + 5;
+    templates.clear();
+    ofDirectory dir("templates");
+    int n = min(4, (int) dir.listDir());
+    for (int i=0; i<n; i++) {
+        if (!dir.getFile(i).isDirectory()){
+            int ctx, cty;
+            if      (i==0) {ctx = ctx0; cty = cty0;}
+            else if (i==1) {ctx = ctx0 + ctw + ctmargin; cty = cty0;}
+            else if (i==2) {ctx = ctx0 + ctw + ctmargin; cty = cty0 + cth + ctmargin;}
+            else if (i==3) {ctx = ctx0; cty = cty0 + cth + ctmargin;}
+            TemplateThumbnail *ctemplate = new TemplateThumbnail();
+            ctemplate->setup(dir.getFile(i).getAbsolutePath(), ctx, cty, ctw, cth);
+            ctemplate->loadIcon(dir.getFile(i).getAbsolutePath());
+            ofAddListener(ctemplate->event, this, &ofApp::templateClicked);
+            templates.push_back(ctemplate);
+        }
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::templateClicked(string & templatePath) {
+    canvas.setFromImage(templatePath);
+}
+
+//--------------------------------------------------------------
 void ofApp::draw(){
     if (mode == 0) {
         drawDebug();
@@ -200,9 +213,9 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::drawMain(ofEventArgs & args){
-    fullscreenCheck2();
+    //fullscreenCheck2();
     
-    ofBackground(0);
+    ofBackgroundGradient(ofColor(100), ofColor(0));
     if (mode == 0) {
         drawPresent();
     }
@@ -216,17 +229,18 @@ void ofApp::drawMain(ofEventArgs & args){
 
 //--------------------------------------------------------------
 void ofApp::drawDebug(){
-    ofBackground(100);
+    ofBackgroundGradient(ofColor(100), ofColor(0));
 
     canvas.draw();
-    canvas.drawGui();
+    panelTop.draw();
+    panelLeft.draw();
 
     if (output.isAllocated()) {
         output.draw(ofGetWidth()-1024-5, ofGetHeight()-512-5);
     }
 
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate()), 10, 12);
-    gui.draw();
+    //gui.draw();
     
     goToFaves.draw();
     saveFave.draw();
@@ -234,10 +248,12 @@ void ofApp::drawDebug(){
 
 //--------------------------------------------------------------
 void ofApp::drawUserView(){
-    ofBackground(100);
+    ofBackgroundGradient(ofColor(100), ofColor(0));
     
     canvas.draw();
-    canvas.drawGui();
+    panelTop.draw();
+    panelLeft.draw();
+    drawTemplates();
     
     goToFaves.draw();
     saveFave.draw();
@@ -245,7 +261,8 @@ void ofApp::drawUserView(){
 
 //--------------------------------------------------------------
 void ofApp::drawPresent(){
-    ofBackground(0);
+    ofBackgroundGradient(ofColor(100), ofColor(0));
+    
     if (output.isAllocated()) {
         int w = int(0.5 * ofGetWidth() - 20);
         int h = int(float(w) / (output.getWidth() / output.getHeight()));
@@ -262,6 +279,13 @@ void ofApp::drawFavorites(){
 }
 
 //--------------------------------------------------------------
+void ofApp::drawTemplates() {
+    for (auto t : templates) {
+        t->draw();
+    }
+}
+
+//--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     if (key=='1') {
         mode = 0;
@@ -272,21 +296,10 @@ void ofApp::keyPressed(int key){
     if (key=='3') {
         mode = 2;
     }
-/*
-    else if (key == 'f') {
-        saveFavorite();
+    
+    if (key=='t') {
+        saveTemplate();
     }
-    else if (key == OF_KEY_LEFT) {
-        faves.prevPage();
-    }
-    else if (key == OF_KEY_RIGHT) {
-        faves.nextPage();
-    }
-
-    if (key==' '){
-        toSendManual = true;
-    }
-*/
 }
 
 //--------------------------------------------------------------
@@ -295,6 +308,7 @@ void ofApp::mouseMoved(int x, int y ){
         canvas.mouseMoved(x, y);
         goToFaves.mouseMoved(x, y);
         saveFave.mouseMoved(x, y);
+        mouseMovedTemplates(x, y);
     } else if (mode == 2) {
         faves.mouseMoved(x, y);
         goToDraw.mouseMoved(x, y);
@@ -307,6 +321,7 @@ void ofApp::mouseDragged(int x, int y, int button){
         canvas.mouseDragged(x, y);
         goToFaves.mouseDragged(x, y);
         saveFave.mouseDragged(x, y);
+        mouseDraggedTemplates(x, y);
     } else if (mode == 2) {
         faves.mouseDragged(x, y);
         goToDraw.mouseDragged(x, y);
@@ -319,6 +334,7 @@ void ofApp::mousePressed(int x, int y, int button){
         canvas.mousePressed(x, y);
         goToFaves.mousePressed(x, y);
         saveFave.mousePressed(x, y);
+        mousePressedTemplates(x, y);
     } else if (mode == 2) {
         faves.mousePressed(x, y);
         goToDraw.mousePressed(x, y);
@@ -331,9 +347,38 @@ void ofApp::mouseReleased(int x, int y, int button){
         canvas.mouseReleased(x, y);
         goToFaves.mouseReleased(x, y);
         saveFave.mouseReleased(x, y);
+        mouseReleasedTemplates(x, y);
     } else if (mode == 2) {
         faves.mouseReleased(x, y);
         goToDraw.mouseReleased(x, y);
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseMovedTemplates(int mx, int my) {
+    for (auto t : templates) {
+        t->mouseMoved(mx, my);
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::mousePressedTemplates(int mx, int my) {
+    for (auto t : templates) {
+        t->mousePressed(mx, my);
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseDraggedTemplates(int mx, int my) {
+    for (auto t : templates) {
+        t->mouseDragged(mx, my);
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseReleasedTemplates(int mx, int my) {
+    for (auto t : templates) {
+        t->mouseReleased(mx, my);
     }
 }
 

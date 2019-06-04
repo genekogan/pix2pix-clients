@@ -14,17 +14,10 @@ public:
 };
 
 //--------------------------------------------------------------
-class NavigateButton : public ofxClickable {
-public:
-    void buttonClicked() {ofNotifyEvent(clickEvent, this);}
-    ofEvent<void> clickEvent;
-};
-
-//--------------------------------------------------------------
 class FavoritesThumbnail : public ofxClickable {
 public:
-    void load(string path);
-    void save(string path);
+    void loadIcon(string path);
+    void saveIcon(string path);
     void buttonClicked();
 protected:
     FaveButtonSettings settings;
@@ -62,7 +55,7 @@ protected:
 
     vector<string> paths;
     vector<FavoritesThumbnail> favorites;
-    NavigateButton prev, next;
+    ofxClickable prev, next;
     ofTrueTypeFont font;
     
     ofImage main;

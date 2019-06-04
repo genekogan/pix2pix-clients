@@ -5,14 +5,14 @@
 ofEvent <FaveButtonEvent> FaveButtonEvent::events;
 
 //--------------------------------------------------------------
-void FavoritesThumbnail::load(string path) {
-    thumb.load(path);
+void FavoritesThumbnail::loadIcon(string path) {
+    ofxClickable::loadIcon(path);
     settings.path = path;
 }
 
 //--------------------------------------------------------------
-void FavoritesThumbnail::save(string path) {
-    thumb.save(path);
+void FavoritesThumbnail::saveIcon(string path) {
+    ofxClickable::saveIcon(path);
     settings.path = path;
 }
 
@@ -49,8 +49,8 @@ void Favorites::setup(int iw_, int ih_, int im_, int marginTop_) {
     updateThumbnailPositions();
     
     font.load("verdana.ttf", 36);
-    prev.load("back.png");
-    next.load("forward.png");
+    prev.loadIcon("back.png");
+    next.loadIcon("forward.png");
     prev.resize(64, 64);
     next.resize(64, 64);
     prev.setPosition(24, 5);
@@ -81,7 +81,7 @@ void Favorites::loadPage(int p) {
     favorites.clear();
     for (int i=p1; i<p2; i++) {
         FavoritesThumbnail thumb;
-        thumb.load(paths[i]);
+        thumb.loadIcon(paths[i]);
         thumb.resize(iw, ih);
         favorites.push_back(thumb);
     }
@@ -116,7 +116,7 @@ void Favorites::add(ofTexture * texture) {
     FavoritesThumbnail newFave;
     newFave.setFromTexture(texture);
     string newPath = "favorites/favorites"+ofGetTimestampString()+".png";
-    newFave.save(newPath);
+    newFave.saveIcon(newPath);
     paths.push_back(newPath);
     ofLog() << "new path "<<newPath;
     int pIdx = paths.size()-1;

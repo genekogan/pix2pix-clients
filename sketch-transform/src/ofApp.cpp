@@ -83,7 +83,9 @@ void ofApp::setup(){
     
     // templates interface
     loadTemplates();
-    canvas.setFromImage(templates[0]->getName());
+    if (templates.size() > 0) {
+        canvas.setFromImage(templates[0]->getName());
+    }
 }
 
 //--------------------------------------------------------------

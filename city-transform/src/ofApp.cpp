@@ -3,8 +3,11 @@
 
 void ofApp::setup() {
 
-    bFullscreen2 = false;
+#ifdef CALIBRATION_MODE
+    ofSetWindowPosition(3840*2, 0);
+#else
     ofSetWindowPosition(0, 0);
+#endif
     ofSetWindowShape(1920, 1080);
     ofSetVerticalSync(true);
 
@@ -16,26 +19,30 @@ void ofApp::setup() {
 
     width = 768;//1024;
     height = 384;//512;
-    debug = true;
     srcMode = 0;
-    numTrackingColors = 3;
+#ifdef CALIBRATION_MODE
+    debug = true;
+#else
+    debug = false;
+#endif
     isReady = true;
+    bFullscreen2 = false;
 
     // setup input
     if (srcMode==0) {
-        cam.setDeviceID(1);
+        cam.setDeviceID(0);
         cam.setup(640, 480);
         srcWidth = 640;
         srcHeight = 480;
     }
     else if (srcMode==1) {
-        src.load("test3.png");
+        src.load("test.png");
         src.resize(width, height);
         srcWidth = width;
         srcHeight = height;
     }
     else if (srcMode==2) {
-        video.load("/Users/gene/Documents/futurium_test2.mp4");
+        video.load("test.mp4");
         video.setLoopState(OF_LOOP_NORMAL);
         video.play();
         srcWidth = video.getWidth();
@@ -57,14 +64,24 @@ void ofApp::setup() {
     sandbox.setOutColor(4, ofColor(0, 0, 0));
     sandbox.loadSettings();
 
+    exitButton.setup("Save & Exit", 20, 700, 80, 40);
+    ofAddListener(exitButton.clickEvent, this, &ofApp::exitButtonClicked);
+
     // init images
     input.allocate(width, height, OF_IMAGE_COLOR);
     output.allocate(width, height, OF_IMAGE_COLOR);
 
     // setup Runway client
     ofLog::setChannel(std::make_shared<ofxIO::ThreadsafeConsoleLoggerChannel>());
+#ifndef CALIBRATION_MODE
     runway.setup("http://localhost:8759");
     runway.start();
+#endif
+}
+
+//--------------------------------------------------------------
+void ofApp::exitButtonClicked() {
+    exit();
 }
 
 //--------------------------------------------------------------
@@ -82,10 +99,14 @@ void ofApp::checkFullscreen(){
 //--------------------------------------------------------------
 void ofApp::exit() {
     sandbox.saveSettings();
+    ofExit();
 }
 
 //--------------------------------------------------------------
 void ofApp::sendToRunway() {
+    if (!runway.isRunning()) {
+        return;
+    }
     ofxRunwayBundle bundle;
     bundle.address = "convert";
     bundle.images["image"] = input.getPixels();
@@ -139,7 +160,7 @@ void ofApp::updateSandbox(){
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-    //checkFullscreen();
+    checkFullscreen();
 
     if (debug) {
         drawDebug();
@@ -153,27 +174,27 @@ void ofApp::drawDebug(){
     ofBackgroundGradient(ofColor(0), ofColor(100));
 
     sandbox.drawDebug();
+    exitButton.draw();
     if (outputTex.isAllocated()) {
-        outputTex.draw(100 + 2*width, 50);
+        outputTex.draw(64 + 2*width, 50);
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::drawPresent(){
     ofBackgroundGradient(ofColor(0), ofColor(100));
-
-    int w = ofGetWidth() - 20;
+    int margin = 30;
+    int w = ofGetWidth() - 2 * margin;
     int h = int(float(w) / (outputTex.getWidth() / outputTex.getHeight()));
 
     if (outputTex.isAllocated()) {
-        outputTex.draw(10, 10, w, h);
+        outputTex.draw(margin, margin, w, h);
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     sandbox.keyEvent(key);
-
     if (key==' '){
         debug = !debug;
     }
@@ -181,20 +202,28 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
+    if (!debug) return;
     sandbox.mouseMoved(x, y);
+    exitButton.mouseMoved(x, y);
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
+    if (!debug) return;
     sandbox.mouseDragged(x, y);
+    exitButton.mouseDragged(x, y);
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
+    if (!debug) return;
     sandbox.mousePressed(x, y);
+    exitButton.mousePressed(x, y);
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+    if (!debug) return;
     sandbox.mouseReleased(x, y);
+    exitButton.mouseReleased(x, y);
 }

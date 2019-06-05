@@ -10,11 +10,11 @@ void ofApp::setup(){
     ofSetFrameRate(60);
     ofBackground(100);
 
-    cWidth = 900;//1800;
-    cHeight = 900;
+    cWidth = 820;//1800;
+    cHeight = 820;
     width = 512; //1024
     height = 512;
-    mode = 1;
+    mode = 0;
     ready = true;
     toSend = false;
     bFullscreen1 = false;
@@ -24,9 +24,12 @@ void ofApp::setup(){
     canvas.setup(160, 130, cWidth, cHeight);
     canvas.setBackground(ofColor(255));
     
-    panelLeft.setup(60, 130, 85, true, &canvas);
+    panelLeft.setup(60, 130, 70, true, &canvas);
     panelTop.setup(160, 30, 85, false, &canvas);
 
+
+
+/*
     panelLeft.addShapeOption("ground", ofColor(60, 120, 60), 1, 300, "ground.png");
     panelLeft.addShapeOption("bush", ofColor(30, 190, 180), 1, 300, "plant.png");
     panelLeft.addShapeOption("grass", ofColor(255, 255, 255), 1, 300, "grass.png");
@@ -40,6 +43,69 @@ void ofApp::setup(){
     //panelLeft.addShapeOption("river", ofColor(0, 60, 180), 1, 300, "river.png");
     panelLeft.addShapeOption("sea", ofColor(0, 0, 100), 1, 300, "sea.png");
     panelLeft.addShapeOption("water-other", ofColor(0, 0, 185), 1, 300, "river.png");
+*/
+
+/*
+    panelLeft.addShapeOption("ground", ofColor(60, 120, 60), 1, 300, "ground.png");
+    panelLeft.addShapeOption("bush", ofColor(30, 210, 150), 1, 300, "plant.png");
+    panelLeft.addShapeOption("grass", ofColor(0, 255, 0), 1, 300, "grass.png");
+    panelLeft.addShapeOption("plant-other", ofColor(0, 200, 50), 1, 300, "plant.png");
+    panelLeft.addShapeOption("tree", ofColor(60, 225, 5), 1, 300, "tree.png");
+    
+    //panelLeft.addShapeOption("house", ofColor(120, 30, 30), 1, 300, "house.png");
+    panelLeft.addShapeOption("sky-other", ofColor(140, 160, 225), 1, 300, "sky.png");
+    panelLeft.addShapeOption("clouds", ofColor(200, 200, 255), 1, 300, "cloud.png");
+    
+    panelLeft.addShapeOption("mountain", ofColor(200, 200, 200), 1, 300, "mountain.png");
+    panelLeft.addShapeOption("rock", ofColor(150, 150, 150), 1, 300, "rock.png");
+    
+    panelLeft.addShapeOption("river", ofColor(0, 70, 175), 1, 300, "river.png");
+    panelLeft.addShapeOption("sea", ofColor(0, 60, 190), 1, 300, "sea.png");
+    panelLeft.addShapeOption("water-other", ofColor(0, 0, 150), 1, 300, "river.png");
+*/
+
+
+
+    panelLeft.addShapeOption("ground", ofColor(60, 120, 60), 1, 300, "ground.png");
+    panelLeft.addShapeOption("bush", ofColor(30, 210, 150), 1, 300, "plant.png");
+    panelLeft.addShapeOption("grass", ofColor(0, 255, 0), 1, 300, "grass.png");
+    panelLeft.addShapeOption("plant-other", ofColor(0, 200, 50), 1, 300, "plant.png");
+    panelLeft.addShapeOption("tree", ofColor(60, 225, 5), 1, 300, "tree.png");
+    
+    //panelLeft.addShapeOption("house", ofColor(120, 30, 30), 1, 300, "house.png");
+    panelLeft.addShapeOption("sky-other", ofColor(140, 160, 225), 1, 300, "sky.png");
+    panelLeft.addShapeOption("clouds", ofColor(200, 200, 255), 1, 300, "cloud.png");
+    
+    panelLeft.addShapeOption("mountain", ofColor(200, 200, 200), 1, 300, "mountain.png");
+    panelLeft.addShapeOption("rock", ofColor(150, 150, 150), 1, 300, "rock.png");
+    
+    panelLeft.addShapeOption("river", ofColor(0, 70, 175), 1, 300, "river.png");
+    panelLeft.addShapeOption("sea", ofColor(0, 60, 190), 1, 300, "sea.png");
+    panelLeft.addShapeOption("water-other", ofColor(0, 0, 150), 1, 300, "river.png");
+
+
+//   panelLeft.addShapeOption("building", ofColor(30, 30, 30), 1, 300);
+   panelLeft.addShapeOption("fog", ofColor(170, 170, 180), 1, 300);
+   
+   panelLeft.addShapeOption("branch", ofColor(0, 180, 130), 1, 300);
+   
+   panelTop.addShapeOption("dirt", ofColor(100, 80, 30), 1, 300);
+   panelTop.addShapeOption("hill", ofColor(120, 140, 50), 1, 300);   
+   panelTop.addShapeOption("sand", ofColor(80, 80, 50), 1, 300);
+//   panelTop.addShapeOption("building-other", ofColor(50, 70, 50), 1, 300);
+   panelTop.addShapeOption("snow", ofColor(220, 222, 255), 1, 300);
+//   panelTop.addShapeOption("house", ofColor(255, 255, 0), 1, 300);
+
+//   panelTop.addShapeOption("road", ofColor(1, 1, 1), 1, 300);
+   panelTop.addShapeOption("leaves", ofColor(30, 210, 50), 1, 300);
+//   panelTop.addShapeOption("train", ofColor(90, 80, 70), 1, 300);
+   panelTop.addShapeOption("gravel", ofColor(120, 130, 50), 1, 300);
+   panelTop.addShapeOption("stone", ofColor(120, 120, 125), 1, 300);
+
+// flower 118 straw 162 bridge 94 fence 112
+//39 pavement 6616987
+//135 mud 4853697
+//133 moss 4315901
 
     panelTop.addClearOption("clear", "clear.png");
     panelTop.addUndoOption("undo", "undo.png");
@@ -96,7 +162,7 @@ void ofApp::setupMain(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    //fullscreenCheck1();
+    fullscreenCheck1();
 
     canvas.getCanvas().readToPixels(input);
     input.update();
@@ -148,6 +214,8 @@ void ofApp::setModel(string model_name, int which_epoch) {
 
 //--------------------------------------------------------------
 void ofApp::saveFavorite() {
+    saveTemplate();
+    /*
 #ifdef TEST_MODE
     ofFbo fbo;
     fbo.allocate(width, height);
@@ -161,6 +229,7 @@ void ofApp::saveFavorite() {
 #ifndef TEST_MODE
     faves.add(&output);
 #endif
+*/
 }
 
 //--------------------------------------------------------------
@@ -173,8 +242,8 @@ void ofApp::saveTemplate() {
 void ofApp::loadTemplates() {
     int ctw = 360;
     int cth = 360;
-    int ctmargin = 25;
-    int ctx0 = canvas.getRectangle().getX() + canvas.getRectangle().getWidth() + 30;;
+    int ctmargin = 32;
+    int ctx0 = canvas.getRectangle().getX() + canvas.getRectangle().getWidth() + 30;
     int cty0 = canvas.getRectangle().getY() + 5;
     templates.clear();
     ofDirectory dir("templates");
@@ -215,7 +284,7 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::drawMain(ofEventArgs & args){
-    //fullscreenCheck2();
+    fullscreenCheck2();
     
     ofBackgroundGradient(ofColor(100), ofColor(0));
     if (mode == 0) {
@@ -238,11 +307,12 @@ void ofApp::drawDebug(){
     panelLeft.draw();
 
     if (output.isAllocated()) {
-        output.draw(ofGetWidth()-1024-5, ofGetHeight()-512-5);
+        int x = canvas.getRectangle().getX() + canvas.getRectangle().getWidth() + 32;
+        int y = canvas.getRectangle().getY();
+        output.draw(x, y, canvas.getRectangle().getWidth(), canvas.getRectangle().getHeight());    
     }
 
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate()), 10, 12);
-    //gui.draw();
     
     goToFaves.draw();
     saveFave.draw();
@@ -301,6 +371,12 @@ void ofApp::keyPressed(int key){
     
     if (key=='t') {
         saveTemplate();
+    }
+
+    if (key=='z') {
+        bFullscreen1 = false;
+        bFullscreen2 = false;
+        cout << "full screen again ? "<< endl;
     }
 }
 
@@ -388,7 +464,7 @@ void ofApp::mouseReleasedTemplates(int mx, int my) {
 void ofApp::fullscreenCheck1(){
     if(!bFullscreen1){
         float t = ofGetElapsedTimef();
-        if (t > 1) {
+        if (t > 3) {
             ofSetFullscreen(true);
             bFullscreen1 = true;
         }
@@ -399,7 +475,7 @@ void ofApp::fullscreenCheck1(){
 void ofApp::fullscreenCheck2(){
     if(!bFullscreen2){
         float t = ofGetElapsedTimef();
-        if (t > 1) {
+        if (t > 3) {
             ofSetFullscreen(true);
             bFullscreen2 = true;
         }

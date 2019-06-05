@@ -2,10 +2,13 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
+#include "ofxClickable.h"
 #include "ofxCv.h"
 #include "ofxSandboxTracker.h"
 #include "ofxHTTP.h"
 #include "ofxRunway.h"
+
+#define CALIBRATION_MODE
 
 
 class ofApp: public ofBaseApp {
@@ -19,6 +22,7 @@ public:
     void drawPresent();
 
     void checkFullscreen();
+    void exitButtonClicked();
 
     void updateSandbox();
     void sendToRunway();
@@ -32,6 +36,7 @@ public:
     
     ofxRunway runway;
     ofxSandboxTracker sandbox;
+    ofxClickable exitButton;
 
     ofVideoGrabber cam;
     ofVideoPlayer video;
@@ -39,7 +44,6 @@ public:
     ofImage input, output;
     ofTexture outputTex;
 
-    int numTrackingColors;
     int width;
     int height;
     int srcWidth;

@@ -51,7 +51,7 @@ void ofApp::setup() {
 
     // setup cv
     sandbox.setup(srcWidth, srcHeight);
-    sandbox.setDebugPosition(0, 0);
+    sandbox.setDebugPosition(5, 10);
     sandbox.setTrackColor(0, ofColor(120, 0, 0));
     sandbox.setTrackColor(1, ofColor(0, 150, 0));
     sandbox.setTrackColor(2, ofColor(0, 0, 100));
@@ -64,16 +64,21 @@ void ofApp::setup() {
     sandbox.setOutColor(4, ofColor(0, 0, 0));
     sandbox.loadSettings();
 
-    exitButton.setup("Save & Exit", 20, 700, 80, 40);
+    font.load("verdana.ttf", 18);
+    exitButton.setup("Save & Exit", 15, 600, 200, 50);
+    exitButton.setFont(&font);
+    defaultButton.setup("Default settings", 15, 700, 200, 50);
+    defaultButton.setFont(&font);
     ofAddListener(exitButton.clickEvent, this, &ofApp::exitButtonClicked);
+    ofAddListener(defaultButton.clickEvent, this, &ofApp::defaultButtonClicked);
 
     // init images
     input.allocate(width, height, OF_IMAGE_COLOR);
     output.allocate(width, height, OF_IMAGE_COLOR);
 
     // setup Runway client
-    ofLog::setChannel(std::make_shared<ofxIO::ThreadsafeConsoleLoggerChannel>());
 #ifndef CALIBRATION_MODE
+    ofLog::setChannel(std::make_shared<ofxIO::ThreadsafeConsoleLoggerChannel>());
     runway.setup("http://localhost:8759");
     runway.start();
 #endif
@@ -82,6 +87,11 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::exitButtonClicked() {
     exit();
+}
+
+//--------------------------------------------------------------
+void ofApp::defaultButtonClicked() {
+    sandbox.loadSettings("sandboxSettings_default.xml", "settings_default.xml");
 }
 
 //--------------------------------------------------------------
@@ -175,6 +185,7 @@ void ofApp::drawDebug(){
 
     sandbox.drawDebug();
     exitButton.draw();
+    defaultButton.draw();
     if (outputTex.isAllocated()) {
         outputTex.draw(64 + 2*width, 50);
     }
@@ -205,6 +216,7 @@ void ofApp::mouseMoved(int x, int y ){
     if (!debug) return;
     sandbox.mouseMoved(x, y);
     exitButton.mouseMoved(x, y);
+    defaultButton.mouseMoved(x, y);
 }
 
 //--------------------------------------------------------------
@@ -212,6 +224,7 @@ void ofApp::mouseDragged(int x, int y, int button){
     if (!debug) return;
     sandbox.mouseDragged(x, y);
     exitButton.mouseDragged(x, y);
+    defaultButton.mouseDragged(x, y);
 }
 
 //--------------------------------------------------------------
@@ -219,6 +232,7 @@ void ofApp::mousePressed(int x, int y, int button){
     if (!debug) return;
     sandbox.mousePressed(x, y);
     exitButton.mousePressed(x, y);
+    defaultButton.mousePressed(x, y);
 }
 
 //--------------------------------------------------------------
@@ -226,4 +240,5 @@ void ofApp::mouseReleased(int x, int y, int button){
     if (!debug) return;
     sandbox.mouseReleased(x, y);
     exitButton.mouseReleased(x, y);
+    defaultButton.mouseReleased(x, y);
 }

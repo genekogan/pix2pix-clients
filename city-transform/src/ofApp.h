@@ -8,8 +8,8 @@
 #include "ofxHTTP.h"
 #include "ofxRunway.h"
 
-#define CALIBRATION_MODE
 
+#include "calibrationSetting.h"
 
 class ofApp: public ofBaseApp {
 public:
@@ -23,6 +23,7 @@ public:
 
     void checkFullscreen();
     void exitButtonClicked();
+    void defaultButtonClicked();
 
     void updateSandbox();
     void sendToRunway();
@@ -37,6 +38,8 @@ public:
     ofxRunway runway;
     ofxSandboxTracker sandbox;
     ofxClickable exitButton;
+    ofxClickable defaultButton;
+    ofTrueTypeFont font;
 
     ofVideoGrabber cam;
     ofVideoPlayer video;

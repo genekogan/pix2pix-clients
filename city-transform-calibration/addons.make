@@ -1,0 +1,15 @@
+ofxClickable
+ofxCv
+ofxDraggable
+ofxGui
+ofxHTTP
+ofxHomography
+ofxIO
+ofxMediaType
+ofxNetworkUtils
+ofxOpenCv
+ofxPoco
+ofxRunway
+ofxSSLManager
+ofxSandboxTracker
+ofxXmlSettings

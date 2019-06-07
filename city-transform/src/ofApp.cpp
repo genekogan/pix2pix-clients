@@ -3,23 +3,27 @@
 
 void ofApp::setup() {
 
+    int camera_id = 0;
+	int monitor_calibration_id = 2;
+	string path = "master_settings.json";
+	ofFile file(path);
+	if(!file.exists()) {
+        ofLog() << "ERROR: Can't find lookup file, don't know camera_id, using default 0";
+		ofLog() << "ERROR: Can't find lookup file, don't know touchscreen monitor id, using default 2";
+	} else {
+		ofJson json = ofLoadJson(path);
+		monitor_calibration_id = json["monitor_id"]["touchscreen"];
+        camera_id = json["camera_id"]["city_transform"];
+	}
+
+
 #ifdef CALIBRATION_MODE
-    ofSetWindowPosition(3840*2, 0);
+    ofSetWindowPosition(3840 * monitor_calibration_id, 0);
 #else
     ofSetWindowPosition(0, 0);
 #endif
     ofSetWindowShape(1920, 1080);
     ofSetVerticalSync(true);
-    
-    int camera_id = 0;
-    string path = "master_settings.json";
-    ofFile file(path);
-    if(!file.exists()) {
-        ofLog() << "ERROR: Can't find lookup file, don't know camera_id, using default 0";
-    } else {
-        ofJson json = ofLoadJson(path);
-        camera_id = json["camera_id"]["city_transform"];
-    }
 
     //ofSetFullscreen(true);
     ofSetLogLevel(OF_LOG_VERBOSE);

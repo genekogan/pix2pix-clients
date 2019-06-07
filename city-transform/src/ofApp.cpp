@@ -10,6 +10,16 @@ void ofApp::setup() {
 #endif
     ofSetWindowShape(1920, 1080);
     ofSetVerticalSync(true);
+    
+    int camera_id = 0;
+    string path = "master_settings.json";
+    ofFile file(path);
+    if(!file.exists()) {
+        ofLog() << "ERROR: Can't find lookup file, don't know camera_id, using default 0";
+    } else {
+        ofJson json = ofLoadJson(path);
+        camera_id = json["camera_id"]["city_transform"];
+    }
 
     //ofSetFullscreen(true);
     ofSetLogLevel(OF_LOG_VERBOSE);
@@ -30,7 +40,7 @@ void ofApp::setup() {
 
     // setup input
     if (srcMode==0) {
-        cam.setDeviceID(0);
+        cam.setDeviceID(camera_id);
         cam.setup(640, 480);
         srcWidth = 640;
         srcHeight = 480;
@@ -51,6 +61,7 @@ void ofApp::setup() {
 
     // setup cv
     sandbox.setup(srcWidth, srcHeight);
+    sandbox.setEllipseSize(36);
     sandbox.setDebugPosition(5, 10);
     sandbox.setTrackColor(0, ofColor(120, 0, 0));
     sandbox.setTrackColor(1, ofColor(0, 150, 0));

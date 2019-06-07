@@ -21,11 +21,11 @@ void ofApp::setup(){
     bFullscreen2 = false;
 
     // setup drawing canvas
-    canvas.setup(160, 130, cWidth, cHeight);
+    canvas.setup(120, 130, cWidth, cHeight);
     canvas.setBackground(ofColor(255));
     
-    panelLeft.setup(60, 130, 70, true, &canvas);
-    panelTop.setup(160, 30, 85, false, &canvas);
+    panelLeft.setup(20, 130, 80, true, &canvas);
+    panelTop.setup(120, 30, 85, false, &canvas);
 
 
 
@@ -64,52 +64,42 @@ void ofApp::setup(){
     panelLeft.addShapeOption("water-other", ofColor(0, 0, 150), 1, 300, "river.png");
 */
 
-
-
-    panelLeft.addShapeOption("ground", ofColor(60, 120, 60), 1, 300, "ground.png");
-    panelLeft.addShapeOption("bush", ofColor(30, 210, 150), 1, 300, "plant.png");
-    panelLeft.addShapeOption("grass", ofColor(0, 255, 0), 1, 300, "grass.png");
-    panelLeft.addShapeOption("plant-other", ofColor(0, 200, 50), 1, 300, "plant.png");
-    panelLeft.addShapeOption("tree", ofColor(60, 225, 5), 1, 300, "tree.png");
     
-    //panelLeft.addShapeOption("house", ofColor(120, 30, 30), 1, 300, "house.png");
-    panelLeft.addShapeOption("sky-other", ofColor(140, 160, 225), 1, 300, "sky.png");
-    panelLeft.addShapeOption("clouds", ofColor(200, 200, 255), 1, 300, "cloud.png");
     
-    panelLeft.addShapeOption("mountain", ofColor(200, 200, 200), 1, 300, "mountain.png");
-    panelLeft.addShapeOption("rock", ofColor(150, 150, 150), 1, 300, "rock.png");
+    string path = "master_settings.json";
+    ofFile file(path);
+    if(!file.exists()) {
+        ofLog() << "Can't find lookup file ";
+        return;
+    }
     
-    panelLeft.addShapeOption("river", ofColor(0, 70, 175), 1, 300, "river.png");
-    panelLeft.addShapeOption("sea", ofColor(0, 60, 190), 1, 300, "sea.png");
-    panelLeft.addShapeOption("water-other", ofColor(0, 0, 150), 1, 300, "river.png");
+    ofJson json = ofLoadJson(path);
+    for (auto & label : json["sketch_transform_labels"]) {
+        string name = label["name"];
+        string iconPath = label["icon"];
+        int index = label["index"];
+        int r = label["color"][0];
+        int g = label["color"][1];
+        int b = label["color"][2];
+        panelLeft.addShapeOption(name, ofColor(r, g, b), 1, 300, iconPath);
+    }
+    
 
-
-//   panelLeft.addShapeOption("building", ofColor(30, 30, 30), 1, 300);
-   panelLeft.addShapeOption("fog", ofColor(170, 170, 180), 1, 300);
-   
-   panelLeft.addShapeOption("branch", ofColor(0, 180, 130), 1, 300);
-   
-   panelTop.addShapeOption("dirt", ofColor(100, 80, 30), 1, 300);
-   panelTop.addShapeOption("hill", ofColor(120, 140, 50), 1, 300);   
-   panelTop.addShapeOption("sand", ofColor(80, 80, 50), 1, 300);
-//   panelTop.addShapeOption("building-other", ofColor(50, 70, 50), 1, 300);
-   panelTop.addShapeOption("snow", ofColor(220, 222, 255), 1, 300);
-//   panelTop.addShapeOption("house", ofColor(255, 255, 0), 1, 300);
-
-//   panelTop.addShapeOption("road", ofColor(1, 1, 1), 1, 300);
-   panelTop.addShapeOption("leaves", ofColor(30, 210, 50), 1, 300);
-//   panelTop.addShapeOption("train", ofColor(90, 80, 70), 1, 300);
-   panelTop.addShapeOption("gravel", ofColor(120, 130, 50), 1, 300);
-   panelTop.addShapeOption("stone", ofColor(120, 120, 125), 1, 300);
-
+    
+    
+//    sea -> water
+//    bush -> leaves, plant
+//    dirt -> sand
+    
 // flower 118 straw 162 bridge 94 fence 112
 //39 pavement 6616987
 //135 mud 4853697
 //133 moss 4315901
-
-    panelTop.addClearOption("clear", "clear.png");
-    panelTop.addUndoOption("undo", "undo.png");
+    
     panelTop.addSlider("size", 0, 1);
+    panelTop.addUndoOption("undo", "undo.png");
+    panelTop.addUndoOption("redo", "redo.png");
+    panelTop.addClearOption("clear", "clear.png");
     
     canvas.clear();
 

@@ -39,7 +39,6 @@ void ofApp::setup() {
 #else
     debug = false;
 #endif
-    isReady = true;
     bFullscreen2 = false;
 
     // setup input
@@ -123,7 +122,9 @@ void ofApp::checkFullscreen(){
 
 //--------------------------------------------------------------
 void ofApp::exit() {
+#ifdef CALIBRATION_MODE
     sandbox.saveSettings();
+#endif
     ofExit();
 }
 
@@ -212,9 +213,11 @@ void ofApp::drawPresent(){
     int margin = 30;
     int w = ofGetWidth() - 2 * margin;
     int h = int(float(w) / (outputTex.getWidth() / outputTex.getHeight()));
+    int x = margin;
+    int y = int(0.5 * (ofGetHeight() - h));
 
     if (outputTex.isAllocated()) {
-        outputTex.draw(margin, margin, w, h);
+        outputTex.draw(x, y, w, h);
     }
 }
 

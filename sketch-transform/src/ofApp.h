@@ -88,10 +88,13 @@ public:
     int cHeight;
     int mode;
     bool toSend;
-    bool ready;
     bool bFullscreen1;
     bool bFullscreen2;
 
     bool toSendManual = false;
+
+
+    void canvasPanelEvent(ofxCanvasButtonEvent &e);
+    bool toClearCanvas;
     
 };

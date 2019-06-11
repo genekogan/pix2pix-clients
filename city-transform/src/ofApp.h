@@ -52,7 +52,6 @@ public:
     int srcWidth;
     int srcHeight;
     int srcMode;
-    bool isReady;
     bool debug;
     bool bFullscreen2;
 };

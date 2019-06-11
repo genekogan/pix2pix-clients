@@ -1,6 +1,12 @@
 #include "ofApp.h"
 
 
+//    sea -> water
+//    bush -> leaves, plant
+//    dirt -> sand
+// flower 118 straw 162 bridge 94 fence 112, 39 pavement, 135 mud, 133 moss 
+
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetWindowShape(1920, 1080);
@@ -14,8 +20,7 @@ void ofApp::setup(){
     cHeight = 820;
     width = 512; //1024
     height = 512;
-    mode = 0;
-    ready = true;
+    mode = 1;
     toSend = false;
     bFullscreen1 = false;
     bFullscreen2 = false;
@@ -23,99 +28,44 @@ void ofApp::setup(){
     // setup drawing canvas
     canvas.setup(120, 130, cWidth, cHeight);
     canvas.setBackground(ofColor(255));
+    canvas.clear();
+    input.allocate(width, height, OF_IMAGE_COLOR);
     
+    // create gui
     panelLeft.setup(20, 130, 80, true, &canvas);
     panelTop.setup(120, 30, 85, false, &canvas);
-
-
-
-/*
-    panelLeft.addShapeOption("ground", ofColor(60, 120, 60), 1, 300, "ground.png");
-    panelLeft.addShapeOption("bush", ofColor(30, 190, 180), 1, 300, "plant.png");
-    panelLeft.addShapeOption("grass", ofColor(255, 255, 255), 1, 300, "grass.png");
-    panelLeft.addShapeOption("tree", ofColor(0, 0, 255), 1, 300, "tree.png");
-    panelLeft.addShapeOption("plant-other", ofColor(0, 255, 0), 1, 300, "plant.png");
-    //panelLeft.addShapeOption("house", ofColor(120, 30, 30), 1, 300, "house.png");
-    panelLeft.addShapeOption("sky-other", ofColor(40, 60, 255), 1, 300, "sky.png");
-    panelLeft.addShapeOption("clouds", ofColor(40, 40, 40), 1, 300, "cloud.png");
-    panelLeft.addShapeOption("mountain", ofColor(200, 200, 200), 1, 300, "mountain.png");
-    panelLeft.addShapeOption("rock", ofColor(150, 150, 150), 1, 300, "rock.png");
-    //panelLeft.addShapeOption("river", ofColor(0, 60, 180), 1, 300, "river.png");
-    panelLeft.addShapeOption("sea", ofColor(0, 0, 100), 1, 300, "sea.png");
-    panelLeft.addShapeOption("water-other", ofColor(0, 0, 185), 1, 300, "river.png");
-*/
-
-/*
-    panelLeft.addShapeOption("ground", ofColor(60, 120, 60), 1, 300, "ground.png");
-    panelLeft.addShapeOption("bush", ofColor(30, 210, 150), 1, 300, "plant.png");
-    panelLeft.addShapeOption("grass", ofColor(0, 255, 0), 1, 300, "grass.png");
-    panelLeft.addShapeOption("plant-other", ofColor(0, 200, 50), 1, 300, "plant.png");
-    panelLeft.addShapeOption("tree", ofColor(60, 225, 5), 1, 300, "tree.png");
-    
-    //panelLeft.addShapeOption("house", ofColor(120, 30, 30), 1, 300, "house.png");
-    panelLeft.addShapeOption("sky-other", ofColor(140, 160, 225), 1, 300, "sky.png");
-    panelLeft.addShapeOption("clouds", ofColor(200, 200, 255), 1, 300, "cloud.png");
-    
-    panelLeft.addShapeOption("mountain", ofColor(200, 200, 200), 1, 300, "mountain.png");
-    panelLeft.addShapeOption("rock", ofColor(150, 150, 150), 1, 300, "rock.png");
-    
-    panelLeft.addShapeOption("river", ofColor(0, 70, 175), 1, 300, "river.png");
-    panelLeft.addShapeOption("sea", ofColor(0, 60, 190), 1, 300, "sea.png");
-    panelLeft.addShapeOption("water-other", ofColor(0, 0, 150), 1, 300, "river.png");
-*/
-
-    
-    
-    string path = "master_settings.json";
-    ofFile file(path);
-    if(!file.exists()) {
-        ofLog() << "Can't find lookup file ";
-        return;
-    }
-    
-    ofJson json = ofLoadJson(path);
-    for (auto & label : json["sketch_transform_labels"]) {
-        string name = label["name"];
-        string iconPath = label["icon"];
-        int index = label["index"];
-        int r = label["color"][0];
-        int g = label["color"][1];
-        int b = label["color"][2];
-        panelLeft.addShapeOption(name, ofColor(r, g, b), 1, 300, iconPath);
-    }
-    
-
-    
-    
-//    sea -> water
-//    bush -> leaves, plant
-//    dirt -> sand
-    
-// flower 118 straw 162 bridge 94 fence 112
-//39 pavement 6616987
-//135 mud 4853697
-//133 moss 4315901
-    
     panelTop.addSlider("size", 0, 1);
     panelTop.addUndoOption("undo", "undo.png");
     panelTop.addUndoOption("redo", "redo.png");
     panelTop.addClearOption("clear", "clear.png");
-    
-    canvas.clear();
 
-    // init images
-    input.allocate(width, height, OF_IMAGE_COLOR);
-    // output.allocate(width, height, OF_IMAGE_COLOR);
+    // get lookup table of buttons     
+    string path = "master_settings.json";
+    ofFile file(path);
+    if(file.exists()) {
+        ofJson json = ofLoadJson(path);
+        for (auto & label : json["sketch_transform_labels"]) {
+            string name = label["name"];
+            string iconPath = label["icon"];
+            int index = label["index"];
+            int r = label["color"][0];
+            int g = label["color"][1];
+            int b = label["color"][2];
+            panelLeft.addShapeOption(name, ofColor(r, g, b), 1, 300, iconPath);
+        }
+    } else {
+        ofLog() << "Can't find lookup file ";
+    }
+
+    // click first button & divert clearing
+    panelLeft.getElement(0)->buttonClicked();
+    ofAddListener(ofxCanvasButtonEvent::events, this, &ofApp::canvasPanelEvent);
 
     // setup Runway client
     ofLog::setChannel(std::make_shared<ofxIO::ThreadsafeConsoleLoggerChannel>());
     runway.setup("http://localhost:8651");
     runway.start();
     
-//    gui.setup();
-//    gui.setName("sketch-transform");
-//    gui.setPosition(10, 720);
-
     // nav buttons
     font.load("verdana.ttf", 36);
     goToFaves.setName("Faves!");
@@ -144,6 +94,15 @@ void ofApp::setup(){
     }
 }
 
+void ofApp::canvasPanelEvent(ofxCanvasButtonEvent &e) {
+    if (e.settings.isLine == NULL && (e.settings.color == ofColor::black)) {
+        canvas.toClear = false;
+        toClearCanvas = true;
+    }
+}
+
+
+
 //--------------------------------------------------------------
 void ofApp::setupMain(){
 	ofSetBackgroundColor(0);
@@ -161,13 +120,19 @@ void ofApp::update(){
         toSend = true;
     }
 
-    if (toSend && ready) {
+    if (toSend && !runway.getBusy()) {
         sendToRunway();
         toSend = false;
         toSendManual = false;
     }
 
     receiveFromRunway();
+
+    if (toClearCanvas && templates.size() > 0) {
+        canvas.setFromImage(templates[0]->getName());
+        toClearCanvas = false;
+    }
+
 }
 
 //--------------------------------------------------------------
@@ -179,7 +144,6 @@ void ofApp::sendToRunway(){
     bundle.address = "convert";
     bundle.images["image"] = outputImage.getPixels();
     runway.send(bundle);
-    ready = false;
 }
 
 //--------------------------------------------------------------
@@ -188,7 +152,6 @@ void ofApp::receiveFromRunway(){
     while (runway.tryReceive(bundleToReceive)) {
         ofPixels processedPixels = bundleToReceive.images["output"];
         output.loadData(processedPixels);
-        ready = true;
     }
 }
 
@@ -204,8 +167,7 @@ void ofApp::setModel(string model_name, int which_epoch) {
 
 //--------------------------------------------------------------
 void ofApp::saveFavorite() {
-    saveTemplate();
-    /*
+    //saveTemplate();
 #ifdef TEST_MODE
     ofFbo fbo;
     fbo.allocate(width, height);
@@ -219,7 +181,6 @@ void ofApp::saveFavorite() {
 #ifndef TEST_MODE
     faves.add(&output);
 #endif
-*/
 }
 
 //--------------------------------------------------------------
@@ -230,11 +191,11 @@ void ofApp::saveTemplate() {
 
 //--------------------------------------------------------------
 void ofApp::loadTemplates() {
-    int ctw = 360;
-    int cth = 360;
-    int ctmargin = 32;
-    int ctx0 = canvas.getRectangle().getX() + canvas.getRectangle().getWidth() + 30;
-    int cty0 = canvas.getRectangle().getY() + 5;
+    int ctw = 375;
+    int cth = 375;
+    int ctmargin = 64;
+    int ctx0 = canvas.getRectangle().getX() + canvas.getRectangle().getWidth() + 80;
+    int cty0 = canvas.getRectangle().getY() + 10;
     templates.clear();
     ofDirectory dir("templates");
     int n = min(4, (int) dir.listDir());
@@ -361,12 +322,6 @@ void ofApp::keyPressed(int key){
     
     if (key=='t') {
         saveTemplate();
-    }
-
-    if (key=='z') {
-        bFullscreen1 = false;
-        bFullscreen2 = false;
-        cout << "full screen again ? "<< endl;
     }
 }
 

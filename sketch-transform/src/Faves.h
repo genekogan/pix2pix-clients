@@ -1,9 +1,13 @@
 #include "ofMain.h"
 #include "ofxClickable.h"
+#include "ofxCanvas.h"
+
 
 //--------------------------------------------------------------
+class FavoritesThumbnail;
 struct FaveButtonSettings {
     string path;
+    ofImage imgIn;
 };
 
 //--------------------------------------------------------------
@@ -19,16 +23,35 @@ public:
     void loadIcon(string path);
     void saveIcon(string path);
     void buttonClicked();
+    void setDrawerName(string drawerName) {this->drawerName = drawerName;}
+    void setInputImage(ofImage *img) {imgIn.setFromPixels(img->getPixels());}
+    string getDrawerName() {return drawerName;}
+    ofImage getInputImage() {return imgIn;}
+    
+    void draw() {
+        ofxClickable::draw();
+        ofPushStyle();
+        ofSetColor(255);
+        ofDrawBitmapString(getDrawerName(), rect.getX()+5, rect.getY()+rect.getHeight()+20);
+        ofPopStyle();
+    }
+    
+    
 protected:
     FaveButtonSettings settings;
+    ofImage imgIn;
+    string drawerName;
 };
 
 //--------------------------------------------------------------
 class Favorites {
 public:
     Favorites();
+    
     void setup(int iw_, int ih_, int im_, int marginTop_);
-    void add(ofTexture * texture);
+    void setCanvasReference(ofxCanvas *canvas) {this->canvas = canvas;}
+    
+    void add(ofTexture * texture, string name);
     void selectMain(int idx);
     void getPaths();
     
@@ -66,5 +89,6 @@ protected:
     int p1, p2;
     int nPages, page;
 
+    ofxCanvas *canvas;
 };
 

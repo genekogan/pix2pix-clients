@@ -8,12 +8,13 @@
 #include "ofxHTTP.h"
 #include "ofxRunway.h"
 #include "Faves.h"
+#include "Keyboard.h"
 
 using namespace cv;
 using namespace ofxCv;
 
 #define PRESENT
-//#define TEST_MODE
+#define TEST_MODE
 
 
 class TemplateThumbnail : public ofxClickable {
@@ -40,7 +41,7 @@ public:
     void loadTemplates();
     void templateClicked(string & templatePath);
 
-    void goToDrawScreen() {mode=0;}
+    void goToDrawScreen() {mode=1;}
     void goToFavesScreen() {mode=2;}
 
     void keyPressed(int key);
@@ -60,9 +61,14 @@ public:
     void sendToRunway();
     void receiveFromRunway();
     void setModel(string model_name, int which_epoch);
-    void saveFavorite();
+    void saveFavoritePrompt();
+    void saveFavorite(string name);
     void saveTemplate();
 
+    void canvasPanelEvent(ofxCanvasButtonEvent &e);
+    void keyboardCancelEvent();
+    void keyboardSaveEvent();
+    
     ofxPanel gui;
     ofxClickable goToFaves;
     ofxClickable goToDraw;
@@ -70,6 +76,7 @@ public:
     
     ofxRunway runway;
     Favorites faves;
+    FavoritesKeyboard keyboard;
     vector<TemplateThumbnail*> templates;
     
     ofImage src;
@@ -88,13 +95,10 @@ public:
     int cHeight;
     int mode;
     bool toSend;
+    bool toClearCanvas;
     bool bFullscreen1;
     bool bFullscreen2;
 
     bool toSendManual = false;
 
-
-    void canvasPanelEvent(ofxCanvasButtonEvent &e);
-    bool toClearCanvas;
-    
 };

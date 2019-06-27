@@ -16,7 +16,7 @@ int main( ){
 	int monitor_touchscreen_id = 2;
 	string path = "master_settings.json";
 	ofFile file(path);
-	if(!file.exists()) {
+	if (!file.exists()) {
 		ofLog() << "ERROR: Can't find lookup file, don't know camera_id, using default 0";
 	} else {
 		ofJson json = ofLoadJson(path);

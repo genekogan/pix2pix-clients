@@ -1,23 +1,22 @@
 #include "ofApp.h"
 
 
-//    sea -> water
-//    bush -> leaves, plant
-//    dirt -> sand
+//  sea -> water
+//  bush -> leaves, plant
+//  dirt -> sand
 // flower 118 straw 162 bridge 94 fence 112, 39 pavement, 135 mud, 133 moss 
 
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    ofSetWindowShape(1920, 1080);
-    
+    //ofSetWindowShape(1920, 1080);
     ofSetVerticalSync(true);
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetFrameRate(60);
     ofBackground(100);
 
-    cWidth = 820;//1800;
-    cHeight = 820;
+    cWidth = 900;//1800;
+    cHeight = 900;
     width = 512; //1024
     height = 512;
     mode = 1;
@@ -26,23 +25,26 @@ void ofApp::setup(){
     bFullscreen2 = false;
 
     // setup drawing canvas
-    canvas.setup(120, 130, cWidth, cHeight);
+    canvas.setup(130, 135, cWidth, cHeight);
     canvas.setBackground(ofColor(255));
+    canvas.setMaxHistory(64);
     canvas.clear();
     input.allocate(width, height, OF_IMAGE_COLOR);
-    
-    // create gui
-    panelLeft.setup(20, 130, 80, true, &canvas);
-    panelTop.setup(120, 30, 85, false, &canvas);
-    panelTop.addSlider("size", 0, 1);
-    panelTop.addUndoOption("undo", "undo.png");
-    panelTop.addUndoOption("redo", "redo.png");
-    panelTop.addClearOption("clear", "clear.png");
 
+    // create gui
+    panelLeft.setup("categories", 20, 130, 90, true, &canvas);
+    panelTop.setup("drawOptions", 120, 20, 95, false, &canvas);
+    panelTop.addBrushSizeOption("small", 20, "paintbrush-thin.png");
+    panelTop.addBrushSizeOption("medium", 60, "paintbrush-medium.png");
+    panelTop.addBrushSizeOption("large", 120, "paintbrush-thick.png");
+    panelTop.addUndoOption("undo", "undo.png");
+    panelTop.addRedoOption("redo", "redo.png");
+    panelTop.addClearOption("clear", "clear.png");
+    
     // get lookup table of buttons     
     string path = "master_settings.json";
     ofFile file(path);
-    if(file.exists()) {
+    if (file.exists()) {
         ofJson json = ofLoadJson(path);
         for (auto & label : json["sketch_transform_labels"]) {
             string name = label["name"];
@@ -51,57 +53,89 @@ void ofApp::setup(){
             int r = label["color"][0];
             int g = label["color"][1];
             int b = label["color"][2];
-            panelLeft.addShapeOption(name, ofColor(r, g, b), 1, 300, iconPath);
+            ofColor clr(r, g, b);
+            ofxCanvasGuiElement * button = panelLeft.addShapeOption(name, clr, NULL, NULL, iconPath);
+            //button->setActiveBackgroundColor(clr);
         }
-    } else {
+    }
+    else {
         ofLog() << "Can't find lookup file ";
+    }
+    
+    // styling for buttons
+    for (auto b : panelLeft.getElements()) {
+        b->setBackgroundGradient(55);
+        b->setCornerRounded(6);
+    }
+    for (auto b : panelTop.getElements()) {
+        b->setBackgroundGradient(85);
+        b->setCornerRounded(6);
     }
 
     // click first button & divert clearing
     panelLeft.getElement(0)->buttonClicked();
+    panelTop.getElement(0)->buttonClicked();
     ofAddListener(ofxCanvasButtonEvent::events, this, &ofApp::canvasPanelEvent);
 
     // setup Runway client
+#ifndef TEST_MODE
     ofLog::setChannel(std::make_shared<ofxIO::ThreadsafeConsoleLoggerChannel>());
     runway.setup("http://localhost:8651");
     runway.start();
+#endif
     
     // nav buttons
     font.load("verdana.ttf", 36);
+    
     goToFaves.setName("Faves!");
     goToFaves.setFont(&font);
+    goToFaves.setBackgroundColor(ofColor::lightGray);
+    goToFaves.setBackgroundGradient(85);
+    goToFaves.setCornerRounded(5);
     goToFaves.resize(180, 60);
-    goToFaves.setPosition(ofGetWidth()-220, 5);
+    goToFaves.setPosition(ofGetWidth()-220, 20);
+    
     goToDraw.setName("Draw!");
     goToDraw.setFont(&font);
+    goToDraw.setBackgroundColor(ofColor::lightGray);
+    goToDraw.setBackgroundGradient(85);
+    goToDraw.setCornerRounded(5);
     goToDraw.resize(180, 60);
-    goToDraw.setPosition(ofGetWidth()-220, 5);
+    goToDraw.setPosition(ofGetWidth()-220, 20);
+    
     saveFave.setName("Save!");
     saveFave.setFont(&font);
+    saveFave.setBackgroundColor(ofColor::lightGray);
+    saveFave.setBackgroundGradient(85);
+    saveFave.setCornerRounded(5);
     saveFave.resize(180, 60);
-    saveFave.setPosition(ofGetWidth() - 420, 5);
+    saveFave.setPosition(ofGetWidth() - 420, 20);
+    
     ofAddListener(goToDraw.clickEvent, this, &ofApp::goToDrawScreen);
     ofAddListener(goToFaves.clickEvent, this, &ofApp::goToFavesScreen);
-    ofAddListener(saveFave.clickEvent, this, &ofApp::saveFavorite);
+    ofAddListener(saveFave.clickEvent, this, &ofApp::saveFavoritePrompt);
     
     // favorites interface
     //faves.setup(320, 160, 24, 90);
+    faves.setCanvasReference(&canvas);
     
+    // setup keyboard
+    keyboard.setup(LAYOUT_GERMAN);
+    keyboard.setCharacterLimit(25);
+    keyboard.setInputPosition(360, 200, 1100, 86);
+    keyboard.setPosition(380, 330, 84, 84, 30, 10);
+    keyboard.loadInputFont("verdana.ttf", 46);
+    keyboard.clearInput();
+    keyboard.setVisible(false);
+    ofAddListener(keyboard.bSave.clickEvent, this, &ofApp::keyboardSaveEvent);
+    //ofAddListener(keyboard.bCancel.clickEvent, this, &ofApp::keyboardCancelEvent);
+
     // templates interface
     loadTemplates();
     if (templates.size() > 0) {
         canvas.setFromImage(templates[0]->getName());
     }
 }
-
-void ofApp::canvasPanelEvent(ofxCanvasButtonEvent &e) {
-    if (e.settings.isLine == NULL && (e.settings.color == ofColor::black)) {
-        canvas.toClear = false;
-        toClearCanvas = true;
-    }
-}
-
-
 
 //--------------------------------------------------------------
 void ofApp::setupMain(){
@@ -166,21 +200,31 @@ void ofApp::setModel(string model_name, int which_epoch) {
 }
 
 //--------------------------------------------------------------
-void ofApp::saveFavorite() {
+void ofApp::saveFavoritePrompt() {
+    keyboard.setVisible(true);
+}
+
+//--------------------------------------------------------------
+void ofApp::saveFavorite(string name) {
     //saveTemplate();
-#ifdef TEST_MODE
     ofFbo fbo;
-    fbo.allocate(width, height);
+    fbo.allocate(2 * width, height);
     fbo.begin();
     ofClear(0, 0);
-    ofBackground(ofRandom(255), ofRandom(255), ofRandom(255));
-    ofDrawBitmapString(ofGetTimestampString(), width/2, height/2);
+    ofSetColor(ofColor::white);
+    canvas.getCanvas().draw(0, 0, width, height);
+#ifdef TEST_MODE
+    ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255));
+    ofDrawRectangle(width, 0, width, height);
+    ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255));
+    ofDrawRectangle(width+75, 75, width-150, height-150);
+    ofSetColor(ofColor::white);
+    ofDrawBitmapString(ofGetTimestampString(), width + width/2, height/2);
+#else
+    output.draw(width, 0);
+#endif
     fbo.end();
-    faves.add(&fbo.getTexture());
-#endif
-#ifndef TEST_MODE
-    faves.add(&output);
-#endif
+    faves.add(&fbo.getTexture(), name);
 }
 
 //--------------------------------------------------------------
@@ -265,6 +309,7 @@ void ofApp::drawDebug(){
 
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate()), 10, 12);
     
+    keyboard.drawAll();
     goToFaves.draw();
     saveFave.draw();
 }
@@ -272,12 +317,11 @@ void ofApp::drawDebug(){
 //--------------------------------------------------------------
 void ofApp::drawUserView(){
     ofBackgroundGradient(ofColor(100), ofColor(0));
-    
     canvas.draw();
     panelTop.draw();
     panelLeft.draw();
     drawTemplates();
-    
+    keyboard.drawAll();
     goToFaves.draw();
     saveFave.draw();
 }
@@ -309,6 +353,29 @@ void ofApp::drawTemplates() {
 }
 
 //--------------------------------------------------------------
+void ofApp::canvasPanelEvent(ofxCanvasButtonEvent &e) {
+    if (e.settings.isLine == NULL && (e.settings.color == ofColor::black)) {
+        canvas.toClear = false;
+        toClearCanvas = true;
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::keyboardCancelEvent() {
+    keyboard.clearInput();
+    keyboard.setVisible(false);
+}
+
+//--------------------------------------------------------------
+void ofApp::keyboardSaveEvent() {
+    string name = keyboard.getInput();
+    saveFavorite(name);
+    keyboard.clearInput();
+    keyboard.setVisible(false);
+    keyboard.setMessageString("Saved favorite!", 2);
+}
+
+//--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     if (key=='1') {
         mode = 0;
@@ -328,6 +395,10 @@ void ofApp::keyPressed(int key){
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
     if (mode == 0 || mode == 1) {
+        if (keyboard.getVisible()) {
+            keyboard.mouseMoved(x, y);
+            return;
+        }
         canvas.mouseMoved(x, y);
         goToFaves.mouseMoved(x, y);
         saveFave.mouseMoved(x, y);
@@ -341,6 +412,10 @@ void ofApp::mouseMoved(int x, int y ){
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
     if (mode == 0 || mode == 1) {
+        if (keyboard.getVisible()) {
+            keyboard.mouseDragged(x, y);
+            return;
+        }
         canvas.mouseDragged(x, y);
         goToFaves.mouseDragged(x, y);
         saveFave.mouseDragged(x, y);
@@ -354,11 +429,16 @@ void ofApp::mouseDragged(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
     if (mode == 0 || mode == 1) {
+        if (keyboard.getVisible()) {
+            keyboard.mousePressed(x, y);
+            return;
+        }
         canvas.mousePressed(x, y);
         goToFaves.mousePressed(x, y);
         saveFave.mousePressed(x, y);
         mousePressedTemplates(x, y);
-    } else if (mode == 2) {
+    }
+    else if (mode == 2) {
         faves.mousePressed(x, y);
         goToDraw.mousePressed(x, y);
     }
@@ -367,11 +447,19 @@ void ofApp::mousePressed(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
     if (mode == 0 || mode == 1) {
+        if (keyboard.getVisible()) {
+            bool inside = keyboard.mouseReleased(x, y);
+            if (!inside) {
+                keyboardCancelEvent();
+            }
+            return;
+        }
         canvas.mouseReleased(x, y);
         goToFaves.mouseReleased(x, y);
         saveFave.mouseReleased(x, y);
         mouseReleasedTemplates(x, y);
-    } else if (mode == 2) {
+    }
+    else if (mode == 2) {
         faves.mouseReleased(x, y);
         goToDraw.mouseReleased(x, y);
     }
@@ -379,29 +467,37 @@ void ofApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseMovedTemplates(int mx, int my) {
-    for (auto t : templates) {
-        t->mouseMoved(mx, my);
+    if (mode == 0 || mode == 1) {
+        for (auto t : templates) {
+            t->mouseMoved(mx, my);
+        }
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressedTemplates(int mx, int my) {
-    for (auto t : templates) {
-        t->mousePressed(mx, my);
+    if (mode == 0 || mode == 1) {
+        for (auto t : templates) {
+            t->mousePressed(mx, my);
+        }
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDraggedTemplates(int mx, int my) {
-    for (auto t : templates) {
-        t->mouseDragged(mx, my);
+    if (mode == 0 || mode == 1) {
+        for (auto t : templates) {
+            t->mouseDragged(mx, my);
+        }
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleasedTemplates(int mx, int my) {
-    for (auto t : templates) {
-        t->mouseReleased(mx, my);
+    if (mode == 0 || mode == 1) {
+        for (auto t : templates) {
+            t->mouseReleased(mx, my);
+        }
     }
 }
 

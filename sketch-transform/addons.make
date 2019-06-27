@@ -6,6 +6,7 @@ ofxHTTP
 ofxIO
 ofxMediaType
 ofxNetworkUtils
+ofxOnscreenKeyboard
 ofxOpenCv
 ofxPoco
 ofxRunway

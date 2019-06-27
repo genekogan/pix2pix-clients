@@ -6,14 +6,23 @@ ofEvent <FaveButtonEvent> FaveButtonEvent::events;
 
 //--------------------------------------------------------------
 void FavoritesThumbnail::loadIcon(string path) {
-    ofxClickable::loadIcon(path);
+    this->iconPath = path;
+
+    icon.load(iconPath);
+    icon.crop(512, 0, 512, 512);
+
+    imgIn.load(iconPath);
+    imgIn.crop(0, 0, 512, 512);
+    
     settings.path = path;
+    settings.imgIn = getInputImage();
 }
 
 //--------------------------------------------------------------
 void FavoritesThumbnail::saveIcon(string path) {
     ofxClickable::saveIcon(path);
     settings.path = path;
+    settings.imgIn = getInputImage();
 }
 
 //--------------------------------------------------------------
@@ -25,7 +34,7 @@ void FavoritesThumbnail::buttonClicked() {
 
 //--------------------------------------------------------------
 Favorites::Favorites() {
-    setup(320, 160, 24, 90);
+    setup(320, 320, 50, 90);
 }
 
 //--------------------------------------------------------------
@@ -65,10 +74,18 @@ void Favorites::setup(int iw_, int ih_, int im_, int marginTop_) {
 void Favorites::updateCounts() {
     nr = 0;
     nPages = 0;
+    
+    
     if (paths.size() > 0) {
         nr = int(favesH / (ih + im));//ceil(float(paths.size()) / nc);
+        cout << " - > get counts " << favesH << " " << ih << " " << im << " " << " = " << nr <<endl;
         nPages = ceil(float(paths.size()) / (nc * nr));
     }
+
+
+    cout << "updat ecounts " << paths.size() << " " << nr << " " << nPages << endl;
+
+    
 }
 
 //--------------------------------------------------------------
@@ -80,8 +97,11 @@ void Favorites::loadPage(int p) {
     p2 = min((int) paths.size(), (page + 1) * nc * nr);
     favorites.clear();
     for (int i=p1; i<p2; i++) {
+        vector<string> pathParts = ofSplitString(paths[i], "_");
+        string drawerName = pathParts[pathParts.size()-2];
         FavoritesThumbnail thumb;
         thumb.loadIcon(paths[i]);
+        thumb.setDrawerName(drawerName);
         thumb.resize(iw, ih);
         favorites.push_back(thumb);
     }
@@ -102,27 +122,48 @@ void Favorites::prevPage() {
 void Favorites::getPaths() {
     paths.clear();
     ofDirectory dir("favorites");
+    cout << "LETS GET PATHS! " << endl;
     int n = dir.listDir();
     for (int i=0; i<n; i++) {
         if (!dir.getFile(i).isDirectory()){
             string path = dir.getFile(i).getAbsolutePath();
             paths.push_back(path);
+            cout << "path " << path << endl;
         }
     }
 }
 
 //--------------------------------------------------------------
-void Favorites::add(ofTexture * texture) {
+void Favorites::add(ofTexture * texture, string name) {
+    string newPath = "favorites/favorites_"+name+"_"+ofGetTimestampString()+".png";
+    
     FavoritesThumbnail newFave;
     newFave.setFromTexture(texture);
-    string newPath = "favorites/favorites"+ofGetTimestampString()+".png";
+    newFave.setDrawerName(name);
+    ofImage imgIn;
+    texture->readToPixels(imgIn);
+    imgIn.update();
+    imgIn.crop(0, 0, 512, 512);
+    newFave.setInputImage(&imgIn);
+    
     newFave.saveIcon(newPath);
     paths.push_back(newPath);
+    
     ofLog() << "new path "<<newPath;
     int pIdx = paths.size()-1;
     p2 = min((int) paths.size(), (page + 1) * nc * nr);
+    
     if (pIdx >= p1 && pIdx < p2) {
+        
+        
+        cout << "NEWFAVE SIZES " << newFave.getIcon().getWidth() << " " << newFave.getIcon().getHeight()<<endl;
+        
+        
+        
+        newFave.crop(512, 0, 512, 512);
+        cout << "NEWFAVE SIZES OK " << newFave.getIcon().getWidth() << " " << newFave.getIcon().getHeight()<<endl;
         newFave.resize(iw, ih);
+        cout << "NEWFAVE SIZES NOW " << newFave.getIcon().getWidth() << " " << newFave.getIcon().getHeight()<<endl;
         favorites.push_back(newFave);
     }
     updateCounts();
@@ -156,18 +197,32 @@ void Favorites::draw() {
 
 //--------------------------------------------------------------
 void Favorites::drawPresent() {
-    
     if (main.isAllocated()) {
-        int w = ofGetWidth() - 20;
-        int h = int(float(w) / (main.getWidth() / main.getHeight()));
+        float aspect = main.getWidth() / main.getHeight();
+        float w, h;
+        if (float(ofGetWidth()) / ofGetHeight() > aspect) {
+            h = ofGetHeight() - 20;
+            cout << "IT IS BIGGER " << endl;
+            w = int(float(h) * aspect);
+        } else {
+            w = ofGetWidth() - 20;
+            h = int(float(w) / aspect);
+        }
+        int x = int(0.5 * (ofGetWidth() - w));
         int y = int(0.5 * (ofGetHeight() - h));
-        main.draw(10, y, w, h);
+        main.draw(x, y, w, h);
+        cout << "w h "<<w << " " << h << endl;
     }
 }
 
 //--------------------------------------------------------------
 void Favorites::buttonEvent(FaveButtonEvent &e) {
     main.load(e.settings.path);
+    main.crop(512, 0, 512, 512);
+    ofImage newCanvas;
+    newCanvas.setFromPixels(e.settings.imgIn);
+    newCanvas.resize(canvas->getRectangle().getWidth(), canvas->getRectangle().getHeight());
+    canvas->setFromPixels(newCanvas);
 }
 
 //--------------------------------------------------------------

@@ -26,6 +26,15 @@ void FavoritesThumbnail::saveIcon(string path) {
 }
 
 //--------------------------------------------------------------
+void FavoritesThumbnail::draw() {
+    ofxClickable::draw();
+    ofPushStyle();
+    ofSetColor(255);
+    ofDrawBitmapString(getDrawerName(), rect.getX()+5, rect.getY()+rect.getHeight()+20);
+    ofPopStyle();
+}
+
+//--------------------------------------------------------------
 void FavoritesThumbnail::buttonClicked() {
     static FaveButtonEvent newEvent;
     newEvent.settings = settings;
@@ -34,11 +43,12 @@ void FavoritesThumbnail::buttonClicked() {
 
 //--------------------------------------------------------------
 Favorites::Favorites() {
-    setup(320, 320, 50, 90);
+    isSetup = false;
 }
 
 //--------------------------------------------------------------
 void Favorites::setup(int iw_, int ih_, int im_, int marginTop_) {
+    isSetup = true;
     favesW = ofGetWidth();
     favesH = ofGetHeight() - marginTop;
     
@@ -57,14 +67,22 @@ void Favorites::setup(int iw_, int ih_, int im_, int marginTop_) {
     loadPage(0);
     updateThumbnailPositions();
     
-    font.load("verdana.ttf", 36);
+    font.load("verdana.ttf", 48);
+    
+    prev.setBackgroundColor(ofColor::lightGray);
+    prev.setBackgroundGradient(50);
+    prev.setCornerRounded(5);
     prev.loadIcon("back.png");
+    prev.resize(80, 80);
+    prev.setPosition(40, 10);
+    
+    next.setBackgroundColor(ofColor::lightGray);
+    next.setBackgroundGradient(50);
+    next.setCornerRounded(5);
     next.loadIcon("forward.png");
-    prev.resize(64, 64);
-    next.resize(64, 64);
-    prev.setPosition(24, 5);
-    next.setPosition(180, 5);
-
+    next.resize(80, 80);
+    next.setPosition(250, 10);
+    
     ofAddListener(FaveButtonEvent::events, this, &Favorites::buttonEvent);
     ofAddListener(prev.clickEvent, this, &Favorites::prevEvent);
     ofAddListener(next.clickEvent, this, &Favorites::nextEvent);
@@ -79,7 +97,7 @@ void Favorites::updateCounts() {
     if (paths.size() > 0) {
         nr = int(favesH / (ih + im));//ceil(float(paths.size()) / nc);
         cout << " - > get counts " << favesH << " " << ih << " " << im << " " << " = " << nr <<endl;
-        nPages = ceil(float(paths.size()) / (nc * nr));
+        nPages = max(1, (int) ceil(float(paths.size()) / (nc * nr)));
     }
 
 
@@ -91,7 +109,8 @@ void Favorites::updateCounts() {
 //--------------------------------------------------------------
 void Favorites::loadPage(int p) {
     if (page == p) return;
-    if (p * nc * nr > paths.size()) return;
+    //if (p * nc * nr > paths.size()) return;
+    if (p < 0 || p > nPages-1) return;
     page = p;
     p1 = page * nc * nr;
     p2 = min((int) paths.size(), (page + 1) * nc * nr);
@@ -100,6 +119,7 @@ void Favorites::loadPage(int p) {
         vector<string> pathParts = ofSplitString(paths[i], "_");
         string drawerName = pathParts[pathParts.size()-2];
         FavoritesThumbnail thumb;
+        thumb.setup(drawerName, 0, 0, iw, ih);
         thumb.loadIcon(paths[i]);
         thumb.setDrawerName(drawerName);
         thumb.resize(iw, ih);
@@ -185,10 +205,16 @@ void Favorites::updateThumbnailPositions() {
 void Favorites::draw() {
     string pageStr = ofToString(page+1)+"/"+ofToString(nPages);
     
-    ofSetColor(255);
-    prev.draw();
-    next.draw();
-    font.drawString(pageStr, 90, 52);
+    if (nPages >= 0) {
+        ofSetColor(ofColor::white);
+        prev.draw();
+        next.draw();
+        int pw = font.getStringBoundingBox(pageStr, 0, 0).getWidth();
+        int ph = font.getStringBoundingBox(pageStr, 0, 0).getHeight();
+        int px = prev.getRectangle().getX() + prev.getRectangle().getWidth() + 0.5 * (next.getRectangle().getX() - (prev.getRectangle().getX() + prev.getRectangle().getWidth()) - pw);
+        int py = prev.getRectangle().getY() + ph + 0.5 * (prev.getRectangle().getHeight() - ph);
+        font.drawString(pageStr, px, py);
+    }
     
     for (int f=0; f<favorites.size(); f++) {
         favorites[f].draw();
@@ -202,7 +228,6 @@ void Favorites::drawPresent() {
         float w, h;
         if (float(ofGetWidth()) / ofGetHeight() > aspect) {
             h = ofGetHeight() - 20;
-            cout << "IT IS BIGGER " << endl;
             w = int(float(h) * aspect);
         } else {
             w = ofGetWidth() - 20;
@@ -211,7 +236,6 @@ void Favorites::drawPresent() {
         int x = int(0.5 * (ofGetWidth() - w));
         int y = int(0.5 * (ofGetHeight() - h));
         main.draw(x, y, w, h);
-        cout << "w h "<<w << " " << h << endl;
     }
 }
 

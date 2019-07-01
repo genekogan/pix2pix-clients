@@ -10,12 +10,14 @@ struct FaveButtonSettings {
     ofImage imgIn;
 };
 
+
 //--------------------------------------------------------------
 class FaveButtonEvent : public ofEventArgs {
 public:
     FaveButtonSettings settings;
     static ofEvent<FaveButtonEvent> events;
 };
+
 
 //--------------------------------------------------------------
 class FavoritesThumbnail : public ofxClickable {
@@ -27,21 +29,14 @@ public:
     void setInputImage(ofImage *img) {imgIn.setFromPixels(img->getPixels());}
     string getDrawerName() {return drawerName;}
     ofImage getInputImage() {return imgIn;}
-    
-    void draw() {
-        ofxClickable::draw();
-        ofPushStyle();
-        ofSetColor(255);
-        ofDrawBitmapString(getDrawerName(), rect.getX()+5, rect.getY()+rect.getHeight()+20);
-        ofPopStyle();
-    }
-    
+    void draw();
     
 protected:
     FaveButtonSettings settings;
     ofImage imgIn;
     string drawerName;
 };
+
 
 //--------------------------------------------------------------
 class Favorites {
@@ -54,6 +49,7 @@ public:
     void add(ofTexture * texture, string name);
     void selectMain(int idx);
     void getPaths();
+    bool getIsSetup() {return isSetup;}
     
     void updateCounts();
     void updateThumbnailPositions();
@@ -88,6 +84,7 @@ protected:
     int nc, nr;
     int p1, p2;
     int nPages, page;
+    bool isSetup;
 
     ofxCanvas *canvas;
 };

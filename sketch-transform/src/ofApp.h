@@ -9,12 +9,20 @@
 #include "ofxRunway.h"
 #include "Faves.h"
 #include "Keyboard.h"
+#include "TinyTimer.h"
 
 using namespace cv;
 using namespace ofxCv;
 
 #define PRESENT
 #define TEST_MODE
+//#define DEBUG_VIEW
+
+
+enum SketchMode {
+    PRESENTATION,
+    FAVORITES
+};
 
 
 class TemplateThumbnail : public ofxClickable {
@@ -41,8 +49,8 @@ public:
     void loadTemplates();
     void templateClicked(string & templatePath);
 
-    void goToDrawScreen() {mode=1;}
-    void goToFavesScreen() {mode=2;}
+    void goToDrawScreen() {mode = PRESENTATION;}
+    void goToFavesScreen() {mode = FAVORITES;}
 
     void keyPressed(int key);
     void mouseMoved(int x, int y );
@@ -68,11 +76,13 @@ public:
     void canvasPanelEvent(ofxCanvasButtonEvent &e);
     void keyboardCancelEvent();
     void keyboardSaveEvent();
+    void timerUpEvent();
     
     ofxPanel gui;
     ofxClickable goToFaves;
     ofxClickable goToDraw;
     ofxClickable saveFave;
+    TinyTimer saveFaveTimer;
     
     ofxRunway runway;
     Favorites faves;
@@ -93,7 +103,7 @@ public:
     int height;
     int cWidth;
     int cHeight;
-    int mode;
+    SketchMode mode;
     bool toSend;
     bool toClearCanvas;
     bool bFullscreen1;

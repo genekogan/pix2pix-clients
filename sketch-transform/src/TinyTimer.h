@@ -1,12 +1,38 @@
-//
-//  TinyTimer.h
-//  sketch-transform
-//
-//  Created by Gene Kogan on 6/30/19.
-//
-
-#ifndef TinyTimer_h
-#define TinyTimer_h
+#pragma once
+#include "ofMain.h"
 
 
-#endif /* TinyTimer_h */
+
+class TinyTimer {
+
+public:
+
+    TinyTimer() {
+        ofAddListener(ofEvents().update, this, &TinyTimer::update);
+    }
+
+    void start(float duration) {
+        this->duration = duration;
+        active = true;
+        t0 = ofGetElapsedTimef();
+    }
+
+    void update(ofEventArgs & e) {
+        if (!active) return;
+        float t1 = ofGetElapsedTimef();
+        float dt = t1 - t0;
+        if (dt >= duration) {
+            active = false;
+            ofNotifyEvent(event);
+        }
+    }
+
+    ofEvent<void> event;
+
+protected:
+
+    float t0;
+    float duration;
+    bool active;
+    
+};

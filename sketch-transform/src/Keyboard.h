@@ -27,5 +27,4 @@ protected:
     ofTrueTypeFont fontI;
     float t0, dt;
     string statusMsg;
-    
 };

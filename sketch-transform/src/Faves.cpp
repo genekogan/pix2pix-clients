@@ -10,9 +10,11 @@ void FavoritesThumbnail::loadIcon(string path) {
 
     icon.load(iconPath);
     icon.crop(512, 0, 512, 512);
+    icon.resize(rect.getWidth(), rect.getHeight());
 
     imgIn.load(iconPath);
     imgIn.crop(0, 0, 512, 512);
+    imgIn.resize(rect.getWidth(), rect.getHeight());
     
     settings.path = path;
     settings.imgIn = getInputImage();
@@ -29,8 +31,11 @@ void FavoritesThumbnail::saveIcon(string path) {
 void FavoritesThumbnail::draw() {
     ofxClickable::draw();
     ofPushStyle();
-    ofSetColor(255);
-    ofDrawBitmapString(getDrawerName(), rect.getX()+5, rect.getY()+rect.getHeight()+20);
+    ofRectangle nameRect = font->getStringBoundingBox(getDrawerName(), 0, 0);
+    ofSetColor(ofColor::black, 150);
+    ofDrawRectangle(rect.getX(), rect.getY(), nameRect.getWidth()+8, 40);
+    ofSetColor(ofColor::white);
+    font->drawString(getDrawerName(), rect.getX()+4, rect.getY()+32);
     ofPopStyle();
 }
 
@@ -49,14 +54,17 @@ Favorites::Favorites() {
 //--------------------------------------------------------------
 void Favorites::setup(int iw_, int ih_, int im_, int marginTop_) {
     isSetup = true;
-    favesW = ofGetWidth();
-    favesH = ofGetHeight() - marginTop;
     
     iw = iw_;
     ih = ih_;
     im = im_;
     marginTop = marginTop_;
+
+    favesW = ofGetWidth();
+    favesH = ofGetHeight() - marginTop;
     
+    cout << " SET UP " << favesH << " : " << ofGetHeight()<< " = " << marginTop_ << endl;
+
     nc = int(float(favesW - im) / (iw + im));
     page = -1;
     p1 = 0;
@@ -68,6 +76,7 @@ void Favorites::setup(int iw_, int ih_, int im_, int marginTop_) {
     updateThumbnailPositions();
     
     font.load("verdana.ttf", 48);
+    font2.load("verdana.ttf", 28);
     
     prev.setBackgroundColor(ofColor::lightGray);
     prev.setBackgroundGradient(50);
@@ -93,9 +102,10 @@ void Favorites::updateCounts() {
     nr = 0;
     nPages = 0;
     
-    
+    cout << "faves H = " <<favesH << endl;
     if (paths.size() > 0) {
-        nr = int(favesH / (ih + im));//ceil(float(paths.size()) / nc);
+        nr = floor(favesH / (ih + im));//ceil(float(paths.size()) / nc);
+        cout << "NR = " << nr << " " << favesH <<" " << ih << " " <<im << endl;
         cout << " - > get counts " << favesH << " " << ih << " " << im << " " << " = " << nr <<endl;
         nPages = max(1, (int) ceil(float(paths.size()) / (nc * nr)));
     }
@@ -109,22 +119,31 @@ void Favorites::updateCounts() {
 //--------------------------------------------------------------
 void Favorites::loadPage(int p) {
     if (page == p) return;
-    //if (p * nc * nr > paths.size()) return;
+    
     if (p < 0 || p > nPages-1) return;
     page = p;
     p1 = page * nc * nr;
     p2 = min((int) paths.size(), (page + 1) * nc * nr);
+
     favorites.clear();
     for (int i=p1; i<p2; i++) {
         vector<string> pathParts = ofSplitString(paths[i], "_");
         string drawerName = pathParts[pathParts.size()-2];
+        drawerName = convertDrawerName(drawerName);
         FavoritesThumbnail thumb;
         thumb.setup(drawerName, 0, 0, iw, ih);
         thumb.loadIcon(paths[i]);
+        thumb.setFont(&font2);
         thumb.setDrawerName(drawerName);
         thumb.resize(iw, ih);
         favorites.push_back(thumb);
     }
+    
+    if (page <= 0) {prev.disable();}
+    else {prev.enable();}
+    if (page >= nPages-1) {next.disable();}
+    else {next.enable();}
+
     updateThumbnailPositions();
 }
 
@@ -151,6 +170,7 @@ void Favorites::getPaths() {
             cout << "path " << path << endl;
         }
     }
+    cout << " NOW THERE ARE " << paths.size() << endl;
 }
 
 //--------------------------------------------------------------
@@ -160,6 +180,7 @@ void Favorites::add(ofTexture * texture, string name) {
     FavoritesThumbnail newFave;
     newFave.setFromTexture(texture);
     newFave.setDrawerName(name);
+    newFave.setFont(&font2);
     ofImage imgIn;
     texture->readToPixels(imgIn);
     imgIn.update();
@@ -282,4 +303,47 @@ void Favorites::mouseReleased(int x, int y) {
     for (int f=0; f<favorites.size(); f++) {
         favorites[f].mouseReleased(x, y);
     }
+}
+
+//--------------------------------------------------------------
+string Favorites::convertDrawerName(string oldDrawerName) {
+    // very ugly hack to recover non-standard characters :/
+    string newStr = "";
+    bool isU, isO, isA, isu, iso, isa, is314;
+    isU = false; isO = false; isA = false; isu = false; iso = false; isa = false; is314 = false;
+    for (char & c : oldDrawerName) {
+        string keyStr = ofToString(c);
+        if (keyStr == "\210") {
+            if      (is314 && isU) {newStr = newStr.substr(0, newStr.length()-2); keyStr = "Ü";}
+            else if (is314 && isu) {newStr = newStr.substr(0, newStr.length()-2); keyStr = "ü";}
+            if      (is314 && isA) {newStr = newStr.substr(0, newStr.length()-2); keyStr = "Ä";}
+            else if (is314 && isa) {newStr = newStr.substr(0, newStr.length()-2); keyStr = "ä";}
+            if      (is314 && isO) {newStr = newStr.substr(0, newStr.length()-2); keyStr = "Ö";}
+            else if (is314 && iso) {newStr = newStr.substr(0, newStr.length()-2); keyStr = "ö";}
+            isU = false; isO = false; isA = false; isu = false; iso = false; isa = false; is314 = false;
+        }
+        else if (keyStr == "u") {
+            isU = false; isO = false; isA = false; isu = true; iso = false; isa = false; is314 = false;
+        }
+        else if (keyStr == "U") {
+            isU = true; isO = false; isA = false; isu = false; iso = false; isa = false; is314 = false;
+        }
+        else if (keyStr == "o") {
+            isU = false; isO = false; isA = false; isu = false; iso = true; isa = false; is314 = false;
+        }
+        else if (keyStr == "O") {
+            isU = false; isO = true; isA = false; isu = false; iso = false; isa = false; is314 = false;
+        }
+        else if (keyStr == "a") {
+            isU = false; isO = false; isA = false; isu = false; iso = false; isa = true; is314 = false;
+        }
+        else if (keyStr == "A") {
+            isU = false; isO = false; isA = true; isu = false; iso = false; isa = false; is314 = false;
+        }
+        else if (keyStr == "\314") {
+            is314 = true;
+        }
+        newStr+=keyStr;
+    }
+    return newStr;
 }

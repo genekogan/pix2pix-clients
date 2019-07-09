@@ -30,7 +30,7 @@ public:
     string getDrawerName() {return drawerName;}
     ofImage getInputImage() {return imgIn;}
     void draw();
-    
+
 protected:
     FaveButtonSettings settings;
     ofImage imgIn;
@@ -71,11 +71,14 @@ public:
     void nextEvent() {nextPage();}
     
 protected:
-
+    
+    string convertDrawerName(string oldDrawerName);
+    
     vector<string> paths;
     vector<FavoritesThumbnail> favorites;
-    ofxClickable prev, next;
-    ofTrueTypeFont font;
+    ofxClickable prev;
+    ofxClickable next;
+    ofTrueTypeFont font, font2;
     
     ofImage main;
 

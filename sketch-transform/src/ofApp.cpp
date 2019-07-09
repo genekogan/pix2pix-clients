@@ -131,7 +131,7 @@ void ofApp::setup(){
     
     // setup keyboard
     keyboard.setup(LAYOUT_GERMAN);
-    keyboard.setCharacterLimit(25);
+    keyboard.setCharacterLimit(36);
     keyboard.setInputPosition(360, 200, 1100, 86);
     keyboard.setPosition(380, 330, 84, 84, 30, 10);
     keyboard.loadInputFont("verdana.ttf", 46);
@@ -250,11 +250,11 @@ void ofApp::saveTemplate() {
 
 //--------------------------------------------------------------
 void ofApp::loadTemplates() {
-    int ctw = 375;
-    int cth = 375;
-    int ctmargin = 64;
-    int ctx0 = canvas.getRectangle().getX() + canvas.getRectangle().getWidth() + 80;
-    int cty0 = canvas.getRectangle().getY() + 10;
+    int ctw = 365;
+    int cth = 365;
+    int ctmargin = 50;
+    int ctx0 = canvas.getRectangle().getX() + canvas.getRectangle().getWidth() + ctmargin;
+    int cty0 = canvas.getRectangle().getY() + ctmargin;
     templates.clear();
     ofDirectory dir("templates");
     int n = min(4, (int) dir.listDir());
@@ -510,7 +510,7 @@ void ofApp::mouseReleasedTemplates(int mx, int my) {
 void ofApp::fullscreenCheck1(){
     if(!bFullscreen1){
         float t = ofGetElapsedTimef();
-        if (t > 3) {
+        if (t > 4) {
             ofSetFullscreen(true);
             bFullscreen1 = true;
         }
@@ -526,7 +526,7 @@ void ofApp::fullscreenCheck1(){
 void ofApp::fullscreenCheck2(){
     if(!bFullscreen2){
         float t = ofGetElapsedTimef();
-        if (t > 3) {
+        if (t > 4) {
             ofSetFullscreen(true);
             bFullscreen2 = true;
         }

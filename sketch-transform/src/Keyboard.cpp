@@ -16,6 +16,9 @@ FavoritesKeyboard::FavoritesKeyboard() : ofxOnscreenKeyboard() {
     bSave.setCornerRounded(5);
     
     dt = 0;
+    t0 = ofGetElapsedTimef();
+    
+    setVisible(false);
 }
 
 //--------------------------------------------------------------
@@ -53,7 +56,7 @@ void FavoritesKeyboard::drawAll() {
     ofPushStyle();
     
     ofFill();
-    ofSetColor(0, 80);
+    ofSetColor(0, 165);
     ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
     
     ofSetColor(255);

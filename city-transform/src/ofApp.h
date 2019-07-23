@@ -54,4 +54,5 @@ public:
     int srcMode;
     bool debug;
     bool bFullscreen2;
+    bool autoMode;
 };

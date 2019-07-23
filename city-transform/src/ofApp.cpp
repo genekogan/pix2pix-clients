@@ -3,6 +3,7 @@
 
 void ofApp::setup() {
 
+    autoMode = false;
     int camera_id = 0;
 	int monitor_calibration_id = 2;
 	string path = "master_settings.json";
@@ -14,8 +15,8 @@ void ofApp::setup() {
 		ofJson json = ofLoadJson(path);
 		monitor_calibration_id = json["monitor_id"]["touchscreen"];
         camera_id = json["camera_id"]["city_transform"];
+        autoMode = json["stress_test"] == 1;
 	}
-
 
 #ifdef CALIBRATION_MODE
     ofSetWindowPosition(3840 * monitor_calibration_id, 0);
@@ -162,7 +163,7 @@ void ofApp::update(){
         updateSandbox();
     }
 
-    if (sandbox.isMotionTripped()) {
+    if (sandbox.isMotionTripped() || autoMode) {
         sendToRunway();
     }
 

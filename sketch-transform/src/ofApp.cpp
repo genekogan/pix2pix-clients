@@ -19,6 +19,8 @@ void ofApp::setup(){
     ofSetFrameRate(60);
     ofBackground(100);
 
+    cX = 130;
+    cY = 135;
     cWidth = 900;//1800;
     cHeight = 900;
     width = 512; //1024
@@ -29,7 +31,7 @@ void ofApp::setup(){
     bFullscreen2 = false;
 
     // setup drawing canvas
-    canvas.setup(130, 135, cWidth, cHeight);
+    canvas.setup(cX, cY, cWidth, cHeight);
     canvas.setBackground(ofColor(255));
     canvas.setMaxHistory(64);
     canvas.clear();
@@ -61,6 +63,8 @@ void ofApp::setup(){
             ofxCanvasGuiElement * button = panelLeft.addShapeOption(name, clr, NULL, NULL, iconPath);
             //button->setActiveBackgroundColor(clr);
         }
+        
+        autoMeander = json["stress_test"] == 1;
     }
     else {
         ofLog() << "Can't find lookup file ";
@@ -161,7 +165,11 @@ void ofApp::setupMain(){
 //--------------------------------------------------------------
 void ofApp::update(){
     fullscreenCheck1();
-    
+
+    if (autoMeander) {
+        meander();
+    }
+
     canvas.getCanvas().readToPixels(input);
     input.update();
 
@@ -172,7 +180,6 @@ void ofApp::update(){
     if (toSend && !runway.getBusy()) {
         sendToRunway();
         toSend = false;
-        toSendManual = false;
     }
 
     receiveFromRunway();
@@ -362,6 +369,16 @@ void ofApp::drawFavorites(){
 void ofApp::drawTemplates() {
     for (auto t : templates) {
         t->draw();
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::meander() {
+    int mx = cX + int(ofNoise(20, 0.01*ofGetFrameNum()) * cWidth);
+    int my = cY + int(ofNoise(10, 0.01*ofGetFrameNum()) * cHeight);
+    canvas.mouseDragged(mx, my);
+    if (ofRandom(1) < 0.005) {
+        panelLeft.selectRandomOption();
     }
 }
 

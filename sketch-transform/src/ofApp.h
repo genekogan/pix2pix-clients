@@ -72,6 +72,7 @@ public:
     void saveFavoritePrompt();
     void saveFavorite(string name);
     void saveTemplate();
+    void meander();
 
     void canvasPanelEvent(ofxCanvasButtonEvent &e);
     void keyboardCancelEvent();
@@ -101,6 +102,8 @@ public:
 
     int width;
     int height;
+    int cX;
+    int cY;
     int cWidth;
     int cHeight;
     SketchMode mode;
@@ -108,7 +111,6 @@ public:
     bool toClearCanvas;
     bool bFullscreen1;
     bool bFullscreen2;
-
-    bool toSendManual = false;
+    bool autoMeander;
 
 };

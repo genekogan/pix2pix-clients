@@ -82,7 +82,7 @@ void ofApp::setup(){
 
     // click first button & divert clearing
     panelLeft.getElement(0)->buttonClicked();
-    panelTop.getElement(0)->buttonClicked();
+    panelTop.getElement(autoMeander ? 2 : 0)->buttonClicked();
     ofAddListener(ofxCanvasButtonEvent::events, this, &ofApp::canvasPanelEvent);
     
     // setup Runway client

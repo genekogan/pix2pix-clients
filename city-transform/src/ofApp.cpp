@@ -143,7 +143,7 @@ void ofApp::sendToRunway() {
 //--------------------------------------------------------------
 void ofApp::update(){
 
-    sandbox.setThreshold(ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 255));
+    //sandbox.setThreshold(ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 255));
 
     if (srcMode==0) {
         cam.update();
@@ -163,7 +163,7 @@ void ofApp::update(){
         updateSandbox();
     }
 
-    if (sandbox.isMotionTripped() || autoMode) {
+    if (sandbox.isMotionTripped() || (autoMode && !runway.getBusy())) {
         sendToRunway();
     }
 
@@ -173,7 +173,6 @@ void ofApp::update(){
         outputTex.loadData(processedPixels);
     }
 
-    ofSetWindowTitle(ofToString(ofGetFrameRate()));
 }
 
 //--------------------------------------------------------------

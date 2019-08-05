@@ -60,6 +60,8 @@ public:
     
     void draw();
     void drawPresent();
+
+    void selectRandom();
     
     void mouseMoved(int x, int y );
     void mouseDragged(int x, int y);

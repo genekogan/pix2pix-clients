@@ -69,6 +69,7 @@ public:
     void sendToRunway();
     void receiveFromRunway();
     void setModel(string model_name, int which_epoch);
+    void selectRandomFavorite();
     void saveFavoritePrompt();
     void saveFavorite(string name);
     void saveTemplate();
@@ -83,6 +84,7 @@ public:
     ofxClickable goToFaves;
     ofxClickable goToDraw;
     ofxClickable saveFave;
+    ofxClickable randomFave;
     TinyTimer saveFaveTimer;
     
     ofxRunway runway;

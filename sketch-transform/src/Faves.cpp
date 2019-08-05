@@ -62,8 +62,6 @@ void Favorites::setup(int iw_, int ih_, int im_, int marginTop_) {
 
     favesW = ofGetWidth();
     favesH = ofGetHeight() - marginTop;
-    
-    cout << " SET UP " << favesH << " : " << ofGetHeight()<< " = " << marginTop_ << endl;
 
     nc = int(float(favesW - im) / (iw + im));
     page = -1;
@@ -244,27 +242,45 @@ void Favorites::draw() {
 
 //--------------------------------------------------------------
 void Favorites::drawPresent() {
-    if (main.isAllocated()) {
-        float aspect = main.getWidth() / main.getHeight();
-        float w, h;
-        if (float(ofGetWidth()) / ofGetHeight() > aspect) {
-            h = ofGetHeight() - 20;
-            w = int(float(h) * aspect);
-        } else {
-            w = ofGetWidth() - 20;
-            h = int(float(w) / aspect);
-        }
-        int x = int(0.5 * (ofGetWidth() - w));
-        int y = int(0.5 * (ofGetHeight() - h));
-        main.draw(x, y, w, h);
+    if (!main.isAllocated()) {
+        return;
     }
+
+    float aspect = main.getWidth() / main.getHeight();
+    float w, h;
+    if (float(ofGetWidth()) / ofGetHeight() > aspect) {
+        h = ofGetHeight() - 20;
+        w = int(float(h) * aspect);
+    } else {
+        w = ofGetWidth() - 20;
+        h = int(float(w) / aspect);
+    }
+    int x = int(0.5 * (ofGetWidth() - w));
+    int y = int(0.5 * (ofGetHeight() - h));
+    main.draw(x, y, w, h);
+}
+
+//--------------------------------------------------------------
+void Favorites::selectRandom() {
+    if (favorites.size() == 0) {
+        ofLog() << " there are no favorites " << favorites.size() << endl;
+        return;
+    }
+    int rIdx = int(ofRandom(favorites.size()));
+    ofImage newCanvas;
+    main.load(favorites[rIdx].getIconPath());
+    newCanvas.load(favorites[rIdx].getIconPath());
+    main.crop(512, 0, 512, 512);
+    newCanvas.crop(0, 0, 512, 512);
+    newCanvas.resize(canvas->getRectangle().getWidth(), canvas->getRectangle().getHeight());
+    canvas->setFromPixels(newCanvas.getPixels());
 }
 
 //--------------------------------------------------------------
 void Favorites::buttonEvent(FaveButtonEvent &e) {
+    ofImage newCanvas;
     main.load(e.settings.path);
     main.crop(512, 0, 512, 512);
-    ofImage newCanvas;
     newCanvas.setFromPixels(e.settings.imgIn);
     newCanvas.resize(canvas->getRectangle().getWidth(), canvas->getRectangle().getHeight());
     canvas->setFromPixels(newCanvas);

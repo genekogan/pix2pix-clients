@@ -123,11 +123,22 @@ void ofApp::setup(){
     saveFave.loadIcon("favorites_add.png");
     saveFave.resize(105, 95);
     saveFave.setPosition(900, 20);
+
+    randomFave.setName("Rand");
+    randomFave.setFont(&font);
+    randomFave.setBackgroundColor(ofColor::lightGray);
+    randomFave.setBackgroundGradient(50);
+    randomFave.setCornerRounded(5);
+    randomFave.loadIcon("random.png");
+    randomFave.resize(105, 95);
+    randomFave.setPosition(740, 20);
     
     ofAddListener(goToDraw.clickEvent, this, &ofApp::goToDrawScreen);
     ofAddListener(goToFaves.clickEvent, this, &ofApp::goToFavesScreen);
     ofAddListener(saveFave.clickEvent, this, &ofApp::saveFavoritePrompt);
+    ofAddListener(randomFave.clickEvent, this, &ofApp::selectRandomFavorite);
     ofAddListener(saveFaveTimer.event, this, &ofApp::timerUpEvent);
+    
     
     // favorites interface
     //faves.setup(320, 160, 24, 90);
@@ -221,6 +232,12 @@ void ofApp::setModel(string model_name, int which_epoch) {
     toSend = true;
 }
 
+
+//--------------------------------------------------------------
+void ofApp::selectRandomFavorite() {
+    faves.selectRandom();
+}
+
 //--------------------------------------------------------------
 void ofApp::saveFavoritePrompt() {
     keyboard.setVisible(true);
@@ -303,7 +320,6 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::drawMain(ofEventArgs & args){
     fullscreenCheck2();
-    
     ofBackgroundGradient(ofColor(100), ofColor(0));
     if (mode == PRESENTATION) {
         drawPresent();
@@ -332,6 +348,7 @@ void ofApp::drawDebug(){
     keyboard.drawAll();
     goToFaves.draw();
     saveFave.draw();
+    randomFave.draw();
 }
 
 //--------------------------------------------------------------
@@ -344,6 +361,7 @@ void ofApp::drawUserView(){
     keyboard.drawAll();
     goToFaves.draw();
     saveFave.draw();
+    randomFave.draw();
 }
 
 //--------------------------------------------------------------
@@ -424,6 +442,7 @@ void ofApp::mouseMoved(int x, int y ){
         canvas.mouseMoved(x, y);
         goToFaves.mouseMoved(x, y);
         saveFave.mouseMoved(x, y);
+        randomFave.mouseMoved(x, y);
         mouseMovedTemplates(x, y);
     } else if (mode == FAVORITES) {
         faves.mouseMoved(x, y);
@@ -441,6 +460,7 @@ void ofApp::mouseDragged(int x, int y, int button){
         canvas.mouseDragged(x, y);
         goToFaves.mouseDragged(x, y);
         saveFave.mouseDragged(x, y);
+        randomFave.mouseDragged(x, y);
         mouseDraggedTemplates(x, y);
     } else if (mode == FAVORITES) {
         faves.mouseDragged(x, y);
@@ -458,6 +478,7 @@ void ofApp::mousePressed(int x, int y, int button){
         canvas.mousePressed(x, y);
         goToFaves.mousePressed(x, y);
         saveFave.mousePressed(x, y);
+        randomFave.mousePressed(x, y);
         mousePressedTemplates(x, y);
     }
     else if (mode == FAVORITES) {
@@ -479,6 +500,7 @@ void ofApp::mouseReleased(int x, int y, int button){
         canvas.mouseReleased(x, y);
         goToFaves.mouseReleased(x, y);
         saveFave.mouseReleased(x, y);
+        randomFave.mouseReleased(x, y);
         mouseReleasedTemplates(x, y);
     }
     else if (mode == FAVORITES) {

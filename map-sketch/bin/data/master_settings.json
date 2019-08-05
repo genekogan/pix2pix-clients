@@ -1,0 +1,38 @@
+{
+    "camera_id": {
+        "style_transfer_mirror": 0,
+        "city_transform": 1
+    },
+
+    "monitor_id": {
+        "style_transfer_mirror": 3,
+        "city_transform": 0,
+        "sketch_transform_presentation": 1,
+        "touchscreen": 2   
+    },
+    
+    "sketch_transform_labels": [
+        { "name": "sky", "color":[109, 177, 249], "index":156, "icon": "sky.png" },
+        { "name": "clouds", "color":[147, 157, 173], "index":105, "icon": "cloud.png" },
+        { "name": "mountain", "color":[204, 107, 46], "index":134, "icon": "mountain.png" },
+        { "name": "rock", "color":[119, 53, 11], "index":149, "icon": "rock.png" },
+        { "name": "river", "color":[13, 8, 109], "index":147, "icon": "river.png" },
+        { "name": "sea", "color":[24, 14, 211], "index":154, "icon": "sea.png" },
+        { "name": "tree", "color":[81, 132, 80], "index":168, "icon": "tree.png" },
+        { "name": "bush", "color":[51, 130, 41], "index":96, "icon": "plant.png" },
+        { "name": "grass", "color":[26, 173, 38], "index":123, "icon": "grass.png" },
+        { "name": "dirt", "color":[206, 175, 51], "index":110, "icon": "ground.png" },
+        { "name": "snow", "color":[230, 230, 230], "index":158, "icon": "snow.png" }
+    ],
+
+    "city_transform_labels": [
+        { "name": "nothing", "color": [255, 255, 255], "index":0, "icon": "sky.png" },
+        { "name": "building", "color": [255, 0, 0], "index":1, "icon": "house.png"  },
+        { "name": "park", "color": [0, 255, 0], "index":2, "icon": "plant.png"  },
+        { "name": "water", "color": [0, 0, 255], "index":3, "icon": "sea.png"  },
+        { "name": "road", "color":[0, 0, 1], "index":4, "icon": "river.png"  }
+    ],
+
+"stress_test": 0
+
+}

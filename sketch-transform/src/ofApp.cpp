@@ -38,8 +38,10 @@ void ofApp::setup(){
     input.allocate(width, height, OF_IMAGE_COLOR);
 
     // create gui
-    panelLeft.setup("categories", 20, 130, 90, true, &canvas);
-    panelTop.setup("drawOptions", 120, 20, 95, false, &canvas);
+    panelLeft.setup("categories", 20, 130, 90, 5, true, &canvas);
+    panelLeft.setGuiBgDraw(false);
+    panelTop.setup("drawOptions", 120, 20, 95, 10, false, &canvas);
+    panelTop.setGuiBgDraw(false);
     panelTop.addBrushSizeOption("small", 20, "paintbrush-thin.png");
     panelTop.addBrushSizeOption("medium", 60, "paintbrush-medium.png");
     panelTop.addBrushSizeOption("large", 120, "paintbrush-thick.png");

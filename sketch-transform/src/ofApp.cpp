@@ -394,12 +394,60 @@ void ofApp::drawTemplates() {
 
 //--------------------------------------------------------------
 void ofApp::meander() {
+    
     int mx = cX + int(ofNoise(20, 0.01*ofGetFrameNum()) * cWidth);
     int my = cY + int(ofNoise(10, 0.01*ofGetFrameNum()) * cHeight);
-    canvas.mouseDragged(mx, my);
-    if (ofRandom(1) < 0.005) {
-        panelLeft.selectRandomOption();
+
+    
+    float nz = ofNoise(20, 0.01*ofGetFrameNum());
+    if (nz < 0.67 && !meanderMouseActive) {
+        meanderMouseActive = true;
+        canvas.mousePressed(mx, my);
     }
+    if (nz >= 0.67) {
+        meanderMouseActive = false;
+        canvas.mouseReleased(mx, my);
+    }
+    
+    if (!meanderMouseActive) {
+        
+        if (ofRandom(1) < 0.005) {
+            int nUndo = int(ofRandom(10));
+            for (int n=0; n<nUndo; n++) {
+                canvas.undo();
+            }
+            int nRedo = int(ofRandom(nUndo+1));
+            for (int n=0; n<nRedo; n++) {
+                canvas.redo();
+            }
+        }
+        
+        if (ofRandom(1) < 0.065) {
+            panelLeft.selectRandomOption();
+        }
+        
+        if (ofRandom(1) < 0.065) {
+            panelTop.selectOption(int(ofRandom(3)));
+        }
+
+        if (ofRandom(1) < 0.0015) {
+            canvas.clear();
+        }
+        
+        if (ofRandom(1) < 0.0015) {
+            faves.selectRandom();
+        }
+        
+        if (ofRandom(1) < 0.0015) {
+            int tIdx = int(ofRandom(templates.size()));
+            templates[tIdx]->buttonClicked();
+        }
+
+    }
+    else {
+        canvas.mouseDragged(mx, my);
+    }
+
 }
 
 //--------------------------------------------------------------

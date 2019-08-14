@@ -113,6 +113,8 @@ public:
     bool toClearCanvas;
     bool bFullscreen1;
     bool bFullscreen2;
+    
+    
     bool autoMeander;
-
+    bool meanderMouseActive = false;
 };

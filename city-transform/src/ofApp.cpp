@@ -225,7 +225,9 @@ void ofApp::drawPresent(){
 void ofApp::keyPressed(int key){
     sandbox.keyEvent(key);
     if (key==' '){
+        #ifndef CALIBRATION_MODE
         debug = !debug;
+        #endif
     }
 }
 

@@ -5,51 +5,68 @@
 
 //========================================================================
 int main( ){
-//	ofSetupOpenGL(1024,768,OF_WINDOW);			// <-------- setup the GL context
-
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-//	ofRunApp(new ofApp());
 
 	int monitor_presentation_id = 1;
 	int monitor_touchscreen_id = 2;
+	int resolution_px = 1920;
+	int resolution_py = 1080;
+	int resolution_tx = 1920;
+	int resolution_ty = 1080;
+	int position_px = 0;
+	int position_tx = 0;
+
 	string path = "master_settings.json";
 	ofFile file(path);
 	if (!file.exists()) {
 		ofLog() << "ERROR: Can't find lookup file, don't know camera_id, using default 0";
-	} else {
+	} 
+	else {
 		ofJson json = ofLoadJson(path);
-		monitor_presentation_id = json["monitor_id"]["sketch_transform_presentation"];
+		monitor_presentation_id = json["monitor_id"]["sketch_transform"];
 		monitor_touchscreen_id = json["monitor_id"]["touchscreen"];
+
+		resolution_px = json["monitor_resolution"][ofToString(monitor_presentation_id)][0];
+		resolution_py = json["monitor_resolution"][ofToString(monitor_presentation_id)][1];
+		resolution_tx = json["monitor_resolution"][ofToString(monitor_touchscreen_id)][0];
+		resolution_ty = json["monitor_resolution"][ofToString(monitor_touchscreen_id)][1];
+
+		for (int i=1; i<monitor_presentation_id; i++) {
+			int px = json["monitor_resolution"][ofToString(i)][0];
+			position_px += px;
+		}
+		for (int i=1; i<monitor_touchscreen_id; i++) {
+			int tx = json["monitor_resolution"][ofToString(i)][0];
+			position_tx += tx;
+		}
+
+		ofLog() << "Touchscreen monitor: id "<<monitor_touchscreen_id<<", resolution [" << resolution_tx << ", " <<resolution_ty << "], x-position " << position_tx; 
+		ofLog() << "Presentation monitor: id "<<monitor_presentation_id<<", resolution [" << resolution_px << ", " <<resolution_py << "], x-position " << position_px; 
 	}
 
-	ofGLFWWindowSettings settings;
-	settings.setSize(1920, 1080);
-	settings.setPosition(ofVec2f(monitor_touchscreen_id * 3840, 0));
-	settings.resizable = true;
-	shared_ptr<ofAppBaseWindow> mainWindow = ofCreateWindow(settings);
-//	mainWindow->setFullscreen(true);
+	ofGLFWWindowSettings settingsT;
+	settingsT.setSize(resolution_tx, resolution_ty);
+	settingsT.setPosition(ofVec2f(position_tx, 0));
+	settingsT.resizable = true;
+	//settingsT.windowMode = OF_GAME_MODE;
+	shared_ptr<ofAppBaseWindow> mainWindow = ofCreateWindow(settingsT);
 
-	settings.setSize(2560, 1440);
-//    settings.setSize(1440, 810);
+
 #ifdef PRESENT
-	settings.setPosition(ofVec2f(monitor_presentation_id * 3840,0));
-#endif
-	settings.resizable = true;
-	settings.shareContextWith = mainWindow;	
-	
-#ifdef PRESENT
-    shared_ptr<ofAppBaseWindow> presentWindow = ofCreateWindow(settings);
+	ofGLFWWindowSettings settingsP;
+	settingsP.setSize(resolution_px, resolution_py);
+	settingsP.setPosition(ofVec2f(position_px, 0));
+	settingsP.resizable = true;
+	//settingsP.windowMode = OF_GAME_MODE;
+	settingsP.shareContextWith = mainWindow;	
+    shared_ptr<ofAppBaseWindow> presentWindow = ofCreateWindow(settingsP);
     presentWindow->setVerticalSync(false);
-  //  presentWindow->setFullscreen(true);
 #endif
 	
     shared_ptr<ofApp> mainApp(new ofApp);
 	mainApp->setupMain();
 	
 #ifdef PRESENT
-    ofAddListener(presentWindow->events().draw,mainApp.get(),&ofApp::drawMain);
+    ofAddListener(presentWindow->events().draw, mainApp.get(), &ofApp::drawMain);
 #endif
 
 	ofRunApp(mainWindow, mainApp);

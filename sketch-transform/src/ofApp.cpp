@@ -15,7 +15,7 @@
 void ofApp::setup(){
     //ofSetWindowShape(1920, 1080);
     ofSetVerticalSync(true);
-    ofSetLogLevel(OF_LOG_VERBOSE);
+    //ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetFrameRate(60);
     ofBackground(100);
 

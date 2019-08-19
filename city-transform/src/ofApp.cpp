@@ -77,13 +77,13 @@ void ofApp::setup() {
     ofSetVerticalSync(true);
 
     //ofSetFullscreen(true);
-    ofSetLogLevel(OF_LOG_VERBOSE);
+    //ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetFrameRate(60);
 
     ofBackground(0);
 
-    width = 768;//1024;
-    height = 384;//512;
+    width = 1024;//1024;
+    height = 512;//512;
     srcMode = 0;
 #ifdef CALIBRATION_MODE
     debug = true;

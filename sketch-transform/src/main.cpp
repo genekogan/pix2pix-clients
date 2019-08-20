@@ -8,6 +8,8 @@ int main( ){
 
 	int monitor_presentation_id = 1;
 	int monitor_touchscreen_id = 2;
+	int monitor_presentation_order = 1;
+	int monitor_touchscreen_order = 2;
 	int resolution_px = 1920;
 	int resolution_py = 1080;
 	int resolution_tx = 1920;
@@ -25,17 +27,29 @@ int main( ){
 		monitor_presentation_id = json["monitor_id"]["sketch_transform"];
 		monitor_touchscreen_id = json["monitor_id"]["touchscreen"];
 
+		for (int i=0; i<4; i++) {
+			if (json["monitor_order"][i] == monitor_presentation_id) {
+				monitor_presentation_order = i;
+			}
+			if (json["monitor_order"][i] == monitor_touchscreen_id) {
+				monitor_touchscreen_order = i;
+			}
+		}
+cout << "GOT ORDERS " << monitor_presentation_order << " and t " << monitor_touchscreen_order << endl;
+
 		resolution_px = json["monitor_resolution"][ofToString(monitor_presentation_id)][0];
 		resolution_py = json["monitor_resolution"][ofToString(monitor_presentation_id)][1];
 		resolution_tx = json["monitor_resolution"][ofToString(monitor_touchscreen_id)][0];
 		resolution_ty = json["monitor_resolution"][ofToString(monitor_touchscreen_id)][1];
 
-		for (int i=1; i<monitor_presentation_id; i++) {
-			int px = json["monitor_resolution"][ofToString(i)][0];
+		for (int i=0; i<monitor_presentation_order; i++) {
+			int px = json["monitor_resolution"][ofToString(json["monitor_order"][i])][0];
+			cout << "ADD Px = "<< px << " to " << "position_x" << endl;
 			position_px += px;
 		}
-		for (int i=1; i<monitor_touchscreen_id; i++) {
-			int tx = json["monitor_resolution"][ofToString(i)][0];
+		for (int i=0; i<monitor_touchscreen_order; i++) {
+			int tx = json["monitor_resolution"][ofToString(json["monitor_order"][i])][0];
+			cout << "ADD Tx = "<< tx << " to " << "position_t" << endl;
 			position_tx += tx;
 		}
 

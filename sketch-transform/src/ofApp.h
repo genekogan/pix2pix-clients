@@ -114,7 +114,7 @@ public:
     bool bFullscreen1;
     bool bFullscreen2;
     
-    
     bool autoMeander;
-    bool meanderMouseActive = false;
+    bool meanderMouseActive;
+    float meanderNoise1, meanderNoise2;
 };

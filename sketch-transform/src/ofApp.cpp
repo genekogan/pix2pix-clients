@@ -162,6 +162,10 @@ void ofApp::setup(){
     if (templates.size() > 0) {
         canvas.setFromImage(templates[0]->getName());
     }
+
+    meanderMouseActive = false;
+    meanderNoise1 = ofRandom(100);
+    meanderNoise2 = ofRandom(100);
 }
 
 //--------------------------------------------------------------
@@ -395,8 +399,8 @@ void ofApp::drawTemplates() {
 //--------------------------------------------------------------
 void ofApp::meander() {
     
-    int mx = cX + int(ofNoise(20, 0.01*ofGetFrameNum()) * cWidth);
-    int my = cY + int(ofNoise(10, 0.01*ofGetFrameNum()) * cHeight);
+    int mx = cX + int(ofNoise(meanderNoise1, 0.01*ofGetFrameNum()) * cWidth);
+    int my = cY + int(ofNoise(meanderNoise2, 0.01*ofGetFrameNum()) * cHeight);
 
     
     float nz = ofNoise(20, 0.01*ofGetFrameNum());

@@ -166,6 +166,8 @@ void ofApp::setup(){
     meanderMouseActive = false;
     meanderNoise1 = ofRandom(100);
     meanderNoise2 = ofRandom(100);
+
+    sendToRunway();
 }
 
 //--------------------------------------------------------------

@@ -71,6 +71,7 @@ void ofApp::setup() {
 
     width = 1024;//1024;
     height = 512;//512;
+    
     srcMode = 0;
 #ifdef CALIBRATION_MODE
     debug = true;
@@ -87,7 +88,7 @@ void ofApp::setup() {
                 camera_id = d;
             }
         }
-        cam.setDeviceID(camera_id);
+        cam.setDeviceID(0);
         cam.setup(1280, 720);
         srcWidth = 1280;
         srcHeight = 720;

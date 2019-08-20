@@ -84,7 +84,7 @@ void ofApp::setup(){
 
     // click first button & divert clearing
     panelLeft.getElement(0)->buttonClicked();
-    panelTop.getElement(autoMeander ? 2 : 0)->buttonClicked();
+    panelTop.getElement(autoMeander ? 2 : 1)->buttonClicked();
     ofAddListener(ofxCanvasButtonEvent::events, this, &ofApp::canvasPanelEvent);
     
     // setup Runway client
@@ -266,7 +266,11 @@ void ofApp::saveFavorite(string name) {
     ofSetColor(ofColor::white);
     ofDrawBitmapString(ofGetTimestampString(), width + width/2, height/2);
 #else
-    output.draw(width, 0);
+    ofImage outputPixels;
+    output.readToPixels(outputPixels);
+    outputPixels.update();
+    outputPixels.resize(width, height);
+    outputPixels.draw(width, 0);
 #endif
     fbo.end();
     faves.add(&fbo.getTexture(), name);

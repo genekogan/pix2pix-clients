@@ -99,19 +99,10 @@ void Favorites::setup(int iw_, int ih_, int im_, int marginTop_) {
 void Favorites::updateCounts() {
     nr = 0;
     nPages = 0;
-    
-    cout << "faves H = " <<favesH << endl;
     if (paths.size() > 0) {
         nr = floor(favesH / (ih + im));//ceil(float(paths.size()) / nc);
-        cout << "NR = " << nr << " " << favesH <<" " << ih << " " <<im << endl;
-        cout << " - > get counts " << favesH << " " << ih << " " << im << " " << " = " << nr <<endl;
         nPages = max(1, (int) ceil(float(paths.size()) / (nc * nr)));
     }
-
-
-    cout << "updat ecounts " << paths.size() << " " << nr << " " << nPages << endl;
-
-    
 }
 
 //--------------------------------------------------------------
@@ -137,11 +128,7 @@ void Favorites::loadPage(int p) {
         favorites.push_back(thumb);
     }
     
-    if (page <= 0) {prev.disable();}
-    else {prev.enable();}
-    if (page >= nPages-1) {next.disable();}
-    else {next.enable();}
-
+    checkIfPrevNextAvailable();
     updateThumbnailPositions();
 }
 
@@ -159,16 +146,13 @@ void Favorites::prevPage() {
 void Favorites::getPaths() {
     paths.clear();
     ofDirectory dir("favorites");
-    cout << "LETS GET PATHS! " << endl;
     int n = dir.listDir();
     for (int i=0; i<n; i++) {
         if (!dir.getFile(i).isDirectory()){
             string path = dir.getFile(i).getAbsolutePath();
             paths.push_back(path);
-            cout << "path " << path << endl;
         }
     }
-    cout << " NOW THERE ARE " << paths.size() << endl;
 }
 
 //--------------------------------------------------------------
@@ -188,25 +172,17 @@ void Favorites::add(ofTexture * texture, string name) {
     newFave.saveIcon(newPath);
     paths.push_back(newPath);
     
-    ofLog() << "new path "<<newPath;
     int pIdx = paths.size()-1;
     p2 = min((int) paths.size(), (page + 1) * nc * nr);
     
     if (pIdx >= p1 && pIdx < p2) {
-        
-        
-        cout << "NEWFAVE SIZES " << newFave.getIcon().getWidth() << " " << newFave.getIcon().getHeight()<<endl;
-        
-        
-        
         newFave.crop(512, 0, 512, 512);
-        cout << "NEWFAVE SIZES OK " << newFave.getIcon().getWidth() << " " << newFave.getIcon().getHeight()<<endl;
         newFave.resize(iw, ih);
-        cout << "NEWFAVE SIZES NOW " << newFave.getIcon().getWidth() << " " << newFave.getIcon().getHeight()<<endl;
         favorites.push_back(newFave);
     }
     updateCounts();
     updateThumbnailPositions();
+    checkIfPrevNextAvailable();
 }
 
 //--------------------------------------------------------------
@@ -218,6 +194,15 @@ void Favorites::updateThumbnailPositions() {
         float y = marginTop + im + iy * (ih + im);
         favorites[f].setPosition(x, y);
     }
+}
+
+
+//--------------------------------------------------------------
+void Favorites::checkIfPrevNextAvailable() {
+    if (page <= 0) {prev.disable();}
+    else {prev.enable();}
+    if (page >= nPages-1) {next.disable();}
+    else {next.enable();}
 }
 
 //--------------------------------------------------------------

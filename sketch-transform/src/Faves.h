@@ -51,9 +51,6 @@ public:
     void getPaths();
     bool getIsSetup() {return isSetup;}
     
-    void updateCounts();
-    void updateThumbnailPositions();
-    
     void loadPage(int p);
     void nextPage();
     void prevPage();
@@ -74,6 +71,9 @@ public:
     
 protected:
     
+    void updateCounts();
+    void updateThumbnailPositions();
+    void checkIfPrevNextAvailable();
     string convertDrawerName(string oldDrawerName);
     
     vector<string> paths;

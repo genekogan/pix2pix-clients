@@ -2,9 +2,7 @@
 
 
 void ofApp::setup() {
-
-
-
+    autoMode = false;
 
 	int monitor_presentation_id = 1;
 	int monitor_touchscreen_id = 2;
@@ -16,30 +14,19 @@ void ofApp::setup() {
 	int resolution_ty = 1080;
 	int position_px = 0;
 	int position_tx = 0;
-
-
-
-
-    autoMode = false;
     int camera_id = -1;
 	int monitor_calibration_id = 2;
     string cameraHardwareName = "";
 	string path = "master_settings.json";
 	ofFile file(path);
-
-
 	if(!file.exists()) {
         ofLog() << "ERROR: Can't find lookup file, don't know camera_id, using default 0";
 		ofLog() << "ERROR: Can't find lookup file, don't know touchscreen monitor id, using default 2";
 	} 
     else {
 		ofJson json = ofLoadJson(path);
-		
-        
-        
         monitor_presentation_id = json["monitor_id"]["city_transform"];
 		monitor_touchscreen_id = json["monitor_id"]["touchscreen"];
-
 		for (int i=0; i<4; i++) {
 			if (json["monitor_order"][i] == monitor_presentation_id) {
 				monitor_presentation_order = i;
@@ -48,36 +35,20 @@ void ofApp::setup() {
 				monitor_touchscreen_order = i;
 			}
 		}
-cout << "GOT ORDERS " << monitor_presentation_order << " and t " << monitor_touchscreen_order << endl;
-
-
 		resolution_px = json["monitor_resolution"][ofToString(monitor_presentation_id)][0];
 		resolution_py = json["monitor_resolution"][ofToString(monitor_presentation_id)][1];
 		resolution_tx = json["monitor_resolution"][ofToString(monitor_touchscreen_id)][0];
 		resolution_ty = json["monitor_resolution"][ofToString(monitor_touchscreen_id)][1];
-
 		for (int i=0; i<monitor_presentation_order; i++) {
 			int px = json["monitor_resolution"][ofToString(json["monitor_order"][i])][0];
-			cout << "ADD Px = "<< px << " to " << "position_x" << endl;
 			position_px += px;
 		}
 		for (int i=0; i<monitor_touchscreen_order; i++) {
 			int tx = json["monitor_resolution"][ofToString(json["monitor_order"][i])][0];
-			cout << "ADD Tx = "<< tx << " to " << "position_t" << endl;
 			position_tx += tx;
 		}
-
-
 		ofLog() << "Touchscreen monitor: id "<<monitor_touchscreen_id<<", resolution [" << resolution_tx << ", " <<resolution_ty << "], x-position " << position_tx; 
 		ofLog() << "Presentation monitor: id "<<monitor_presentation_id<<", resolution [" << resolution_px << ", " <<resolution_py << "], x-position " << position_px; 
-
-        
-        
-        
-        
-        //monitor_calibration_id = json["monitor_id"]["touchscreen"];
-cout << "the camera is " << json["camera_id"]["city_transform"] << endl;
-
         cameraHardwareName = "/dev/video"+ofToString(json["camera_id"]["city_transform"]);
         ofLog() << "camera requested: " << cameraHardwareName << endl;
         autoMode = json["stress_test"] == 1;
@@ -108,15 +79,11 @@ cout << "the camera is " << json["camera_id"]["city_transform"] << endl;
 #endif
     bFullscreen2 = false;
 
-    ofLog() << " LOOK FOR " << cameraHardwareName << endl;
-
     // setup input
     if (srcMode==0) {
         auto devices = cam.listDevices();
-        for(int d; d<devices.size(); d++) {
-            ofLog() << " IS IT ? " << devices[d].hardwareName ;
+        for(int d=0; d<devices.size(); d++) {
             if (devices[d].hardwareName == cameraHardwareName) {
-                cout << "   == YES AT "<<d << endl;
                 camera_id = d;
             }
         }
@@ -199,9 +166,9 @@ void ofApp::checkFullscreen(){
 
 //--------------------------------------------------------------
 void ofApp::exit() {
-#ifdef CALIBRATION_MODE
+//#ifdef CALIBRATION_MODE
     sandbox.saveSettings();
-#endif
+//#endif
     ofExit();
 }
 

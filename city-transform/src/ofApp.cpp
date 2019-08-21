@@ -78,6 +78,8 @@ void ofApp::setup() {
 #else
     //debug = false;
     debug = true;
+    ofAddListener(initialDebug.event, this, &ofApp::timerUpEvent);
+    initialDebug.start(20);
 #endif
     bFullscreen2 = false;
 
@@ -125,12 +127,15 @@ void ofApp::setup() {
     sandbox.loadSettings();
 
     font.load("verdana.ttf", 18);
-    exitButton.setup("Save & Exit", 15, 600, 200, 50);
+    mappingButton.setup("Mapping", 15, 430, 185, 50);
+    mappingButton.setFont(&font);
+    exitButton.setup("Save & Exit", 15, 620, 185, 50);
     exitButton.setFont(&font);
-    defaultButton.setup("Default settings", 15, 700, 200, 50);
+    defaultButton.setup("Default settings", 15, 730, 185, 50);
     defaultButton.setFont(&font);
     ofAddListener(exitButton.clickEvent, this, &ofApp::exitButtonClicked);
     ofAddListener(defaultButton.clickEvent, this, &ofApp::defaultButtonClicked);
+    ofAddListener(mappingButton.clickEvent, this, &ofApp::mappingButtonClicked);
 
     // init images
     input.allocate(width, height, OF_IMAGE_COLOR);
@@ -152,6 +157,11 @@ void ofApp::exitButtonClicked() {
 //--------------------------------------------------------------
 void ofApp::defaultButtonClicked() {
     sandbox.loadSettings("sandboxSettings_default.xml", "settings_default.xml");
+}
+
+//--------------------------------------------------------------
+void ofApp::mappingButtonClicked() {
+    sandbox.setMapping(!sandbox.getMapping());
 }
 
 //--------------------------------------------------------------
@@ -247,24 +257,18 @@ void ofApp::drawDebug(){
     ofBackgroundGradient(ofColor(0), ofColor(100));
 
     sandbox.drawDebug();
+    mappingButton.draw();
     exitButton.draw();
     defaultButton.draw();
     if (outputTex.isAllocated()) {
-        outputTex.draw(275, 1580);
+        outputTex.draw(275, ofGetHeight()-5-outputTex.getHeight());
     }
 
-    #ifndef CALIBRATION_MODE
-    if (debug) {
+    if (initialDebug.getActive()) {
         ofSetColor(ofColor::red);
-        int nSec = int((400-ofGetFrameNum())/ofGetFrameRate());
-        font.drawString("Will go to main app in "+ofToString(nSec)+" seconds...", 400, 30);
-        if (ofGetFrameNum() > 400) {
-            debug = false;
-        }
+        font.drawString("Will go to main app in "+ofToString(int(20-initialDebug.getElapsedTime()))+" seconds...", 400, 30);
         ofSetColor(ofColor::white);
     }
-    #endif
-
 }
 
 //--------------------------------------------------------------
@@ -297,6 +301,7 @@ void ofApp::mouseMoved(int x, int y ){
     sandbox.mouseMoved(x, y);
     exitButton.mouseMoved(x, y);
     defaultButton.mouseMoved(x, y);
+    mappingButton.mouseMoved(x, y);
 }
 
 //--------------------------------------------------------------
@@ -305,6 +310,7 @@ void ofApp::mouseDragged(int x, int y, int button){
     sandbox.mouseDragged(x, y);
     exitButton.mouseDragged(x, y);
     defaultButton.mouseDragged(x, y);
+    mappingButton.mouseDragged(x, y);
 }
 
 //--------------------------------------------------------------
@@ -313,6 +319,7 @@ void ofApp::mousePressed(int x, int y, int button){
     sandbox.mousePressed(x, y);
     exitButton.mousePressed(x, y);
     defaultButton.mousePressed(x, y);
+    mappingButton.mousePressed(x, y);
 }
 
 //--------------------------------------------------------------
@@ -321,4 +328,10 @@ void ofApp::mouseReleased(int x, int y, int button){
     sandbox.mouseReleased(x, y);
     exitButton.mouseReleased(x, y);
     defaultButton.mouseReleased(x, y);
+    mappingButton.mouseReleased(x, y);
+}
+
+//--------------------------------------------------------------
+void ofApp::timerUpEvent() {
+    debug = false;
 }

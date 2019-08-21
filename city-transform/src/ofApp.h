@@ -7,8 +7,7 @@
 #include "ofxSandboxTracker.h"
 #include "ofxHTTP.h"
 #include "ofxRunway.h"
-
-
+#include "TinyTimer.h"
 #include "calibrationSetting.h"
 
 class ofApp: public ofBaseApp {
@@ -24,6 +23,7 @@ public:
     void checkFullscreen();
     void exitButtonClicked();
     void defaultButtonClicked();
+    void mappingButtonClicked();
 
     void updateSandbox();
     void sendToRunway();
@@ -35,10 +35,14 @@ public:
     void mousePressed(int x, int y, int button);
     void mouseReleased(int x, int y, int button);
     
+    void timerUpEvent();
+    
     ofxRunway runway;
     ofxSandboxTracker sandbox;
     ofxClickable exitButton;
     ofxClickable defaultButton;
+    ofxClickable mappingButton;
+    
     ofTrueTypeFont font;
 
     ofVideoGrabber cam;
@@ -55,4 +59,5 @@ public:
     bool debug;
     bool bFullscreen2;
     bool autoMode;
+    TinyTimer initialDebug;
 };

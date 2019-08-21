@@ -5,24 +5,27 @@
 ofEvent <FaveButtonEvent> FaveButtonEvent::events;
 
 //--------------------------------------------------------------
-void FavoritesThumbnail::loadIcon(string path) {
+void FavoritesThumbnail::loadIcon(string path, int width, int height) {
     this->iconPath = path;
 
-    icon.load(iconPath);
-    icon.crop(512, 0, 512, 512);
+    string newPath2 = ofToString(path);
+    ofStringReplace(newPath2, "fstfavorites_", "outputs/fstoutput_");
+    cout << "LOAD ICON " << newPath2 << endl;
+    icon.load(newPath2);
     icon.resize(rect.getWidth(), rect.getHeight());
 
-    imgIn.load(iconPath);
-    imgIn.crop(0, 0, 512, 512);
+    ofStringReplace(newPath2, "inputs/fstoutput_", "inputs/fstinput_");
+    //imgIn.load(newPath2);
     imgIn.resize(rect.getWidth(), rect.getHeight());
-    
-    settings.path = path;
-    settings.imgIn = getInputImage();
+
+//    settings.path = newPath2;
+    settings.imgIn = imgIn;//getInputImage();
 }
 
 //--------------------------------------------------------------
 void FavoritesThumbnail::saveIcon(string path) {
     ofxClickable::saveIcon(path);
+    ofStringReplace(path, "fstfavorites_", "outputs/fstoutput_");
     settings.path = path;
     settings.imgIn = getInputImage();
 }
@@ -53,13 +56,15 @@ Favorites::Favorites() {
 }
 
 //--------------------------------------------------------------
-void Favorites::setup(int iw_, int ih_, int im_, int marginTop_) {
+void Favorites::setup(int iw_, int ih_, int im_, int marginTop_, int width_, int height_) {
     isSetup = true;
     
     iw = iw_;
     ih = ih_;
     im = im_;
     marginTop = marginTop_;
+    width = width_;
+    height = height_;
 
     favesW = ofGetWidth();
     favesH = ofGetHeight() - marginTop;
@@ -127,7 +132,7 @@ void Favorites::loadPage(int p) {
         drawerName = convertDrawerName(drawerName);
         FavoritesThumbnail thumb;
         thumb.setup(drawerName, 0, 0, iw, ih);
-        thumb.loadIcon(paths[i]);
+        thumb.loadIcon(paths[i], width, height);
         thumb.setFont(&font2);
         thumb.setDrawerName(drawerName);
         thumb.resize(iw, ih);
@@ -151,7 +156,7 @@ void Favorites::prevPage() {
 //--------------------------------------------------------------
 void Favorites::getPaths() {
     paths.clear();
-    ofDirectory dir("favorites");
+    ofDirectory dir("favorites");    
     int n = dir.listDir();
     for (int i=0; i<n; i++) {
         if (!dir.getFile(i).isDirectory()){
@@ -163,26 +168,36 @@ void Favorites::getPaths() {
 
 //--------------------------------------------------------------
 void Favorites::add(ofTexture * texture, string name) {
-    string newPath = "favorites/favorites_"+name+"_"+ofGetTimestampString()+".png";
+    string newPath = "favorites/fstfavorites_"+name+"_"+ofGetTimestampString()+".png";
     
     FavoritesThumbnail newFave;
     newFave.setFromTexture(texture);
     newFave.setDrawerName(name);
     newFave.setFont(&font2);
-    ofImage imgIn;
+    ofImage imgIn, imgOut;
     texture->readToPixels(imgIn);
+    texture->readToPixels(imgOut);
     imgIn.update();
-    imgIn.crop(0, 0, 512, 512);
+    imgIn.crop(0, 0, width, height);
+    imgOut.update();
+    imgOut.crop(width, 0, width, height);
+
+    string newPath2 = ofToString(newPath);
+    ofStringReplace(newPath2, "fstfavorites_", "inputs/fstinput_");
+    imgIn.save(newPath2);
+
+    ofStringReplace(newPath2, "inputs/fstinput_", "outputs/fstoutput_");
+    imgOut.save(newPath2);
+
     newFave.setInputImage(&imgIn);
-    
     newFave.saveIcon(newPath);
     paths.push_back(newPath);
-    
+
     int pIdx = paths.size()-1;
     p2 = min((int) paths.size(), (page + 1) * nc * nr);
     
     if (pIdx >= p1 && pIdx < p2) {
-        newFave.crop(512, 0, 512, 512);
+        newFave.crop(width, 0, width, height);
         newFave.resize(iw, ih);
         favorites.push_back(newFave);
     }
@@ -265,7 +280,7 @@ void Favorites::selectRandom() {
     ofImage newCanvas;
     main.load(favorites[rIdx].getIconPath());
     newCanvas.load(favorites[rIdx].getIconPath());
-    main.crop(512, 0, 512, 512);
+    main.crop(width, 0, width, height);
 
 
 
@@ -282,7 +297,7 @@ void Favorites::selectRandom() {
 
     
     //if (canvasOverwrite){
-        newCanvas.crop(0, 0, 512, 512);
+        newCanvas.crop(0, 0, width, height);
         newCanvas.resize(canvas->getRectangle().getWidth(), canvas->getRectangle().getHeight());
         canvas->setFromPixels(newCanvas.getPixels());
     //}
@@ -292,7 +307,7 @@ void Favorites::selectRandom() {
 void Favorites::buttonEvent(FaveButtonEvent &e) {
     ofImage newCanvas;
     main.load(e.settings.path);
-    main.crop(512, 0, 512, 512);
+    main.crop(width, 0, width, height);
 
 
 

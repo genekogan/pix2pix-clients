@@ -22,7 +22,7 @@ public:
 //--------------------------------------------------------------
 class FavoritesThumbnail : public ofxClickable {
 public:
-    void loadIcon(string path);
+    void loadIcon(string path, int width, int height);
     void saveIcon(string path);
     void buttonClicked();
     void setDrawerName(string drawerName) {this->drawerName = drawerName;}
@@ -43,7 +43,7 @@ class Favorites {
 public:
     Favorites();
     
-    void setup(int iw_, int ih_, int im_, int marginTop_);
+    void setup(int iw_, int ih_, int im_, int marginTop_, int width_, int height_);
     void setCanvasReference(ofxCanvas *canvas) {this->canvas = canvas;}
     void setCanvasOverwrite(bool canvasOverwrite_);
 
@@ -91,6 +91,7 @@ protected:
     int p1, p2;
     int nPages, page;
     bool isSetup;
+    int width, height;
 
     ofxCanvas *canvas;
 };

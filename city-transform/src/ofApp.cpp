@@ -179,7 +179,9 @@ void ofApp::checkFullscreen(){
 //--------------------------------------------------------------
 void ofApp::exit() {
 //#ifdef CALIBRATION_MODE
-    sandbox.saveSettings();
+    string sand1 = "../../../city-transform-calibration/bin/data/sandboxSettings.xml";
+    string sand2 = "../../../city-transform-calibration/bin/data/settings.xml";
+    sandbox.saveSettings(sand1, sand2);
 //#endif
     ofExit();
 }

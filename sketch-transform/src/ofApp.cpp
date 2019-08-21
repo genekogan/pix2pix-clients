@@ -23,8 +23,8 @@ void ofApp::setup(){
     cY = 135;
     cWidth = 900;//1800;
     cHeight = 900;
-    width = 512; //1024
-    height = 512;
+    width = 1024; //1024
+    height = 1024;
     mode = PRESENTATION;
     toSend = false;
     bFullscreen1 = false;
@@ -274,10 +274,9 @@ void ofApp::saveFavorite(string name) {
     ofDrawBitmapString(ofGetTimestampString(), width + width/2, height/2);
 #else
     ofImage outputPixels;
+    outputPixels.allocate(width, height, OF_IMAGE_COLOR);
     output.readToPixels(outputPixels);
-    outputPixels.update();
-    outputPixels.resize(width, height);
-    outputPixels.draw(width, 0);
+    outputPixels.draw(width, 0, width, height);
 #endif
     fbo.end();
     faves.add(&fbo.getTexture(), name);
@@ -642,7 +641,7 @@ void ofApp::fullscreenCheck1(){
         }
     }
     if (bFullscreen1 && bFullscreen2 && !faves.getIsSetup()) {
-        faves.setup(384, 384, 50, 90);
+        faves.setup(384, 384, 50, 90, width, height);
         goToFaves.enable();
         goToDraw.enable();
     }

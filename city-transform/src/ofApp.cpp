@@ -256,9 +256,9 @@ void ofApp::drawDebug(){
     #ifndef CALIBRATION_MODE
     if (debug) {
         ofSetColor(ofColor::red);
-        int nSec = int((300-ofGetFrameNum())/ofGetFrameRate());
+        int nSec = int((400-ofGetFrameNum())/ofGetFrameRate());
         font.drawString("Will go to main app in "+ofToString(nSec)+" seconds...", 400, 30);
-        if (ofGetFrameNum() > 300) {
+        if (ofGetFrameNum() > 400) {
             debug = false;
         }
         ofSetColor(ofColor::white);

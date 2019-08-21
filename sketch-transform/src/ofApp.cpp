@@ -232,6 +232,7 @@ void ofApp::receiveFromRunway(){
     while (runway.tryReceive(bundleToReceive)) {
         ofPixels processedPixels = bundleToReceive.images["output"];
         output.loadData(processedPixels);
+        resizeOutputRectangle();
     }
 }
 
@@ -259,27 +260,33 @@ void ofApp::saveFavoritePrompt() {
 //--------------------------------------------------------------
 void ofApp::saveFavorite(string name) {
     //saveTemplate();
+    
+    ofImage inputImage, outputImage;
+    inputImage.allocate(width, height, OF_IMAGE_COLOR);
+    outputImage.allocate(width, height, OF_IMAGE_COLOR);
+
+    canvas.getCanvas().readToPixels(inputImage);
+
+#ifdef TEST_MODE
     ofFbo fbo;
-    fbo.allocate(2 * width, height);
+    fbo.allocate(width, height);
     fbo.begin();
     ofClear(0, 0);
     ofSetColor(ofColor::white);
-    canvas.getCanvas().draw(0, 0, width, height);
-#ifdef TEST_MODE
     ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255));
-    ofDrawRectangle(width, 0, width, height);
+    ofDrawRectangle(0, 0, width, height);
     ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255));
-    ofDrawRectangle(width+75, 75, width-150, height-150);
+    ofDrawRectangle(75, 75, width-150, height-150);
     ofSetColor(ofColor::white);
-    ofDrawBitmapString(ofGetTimestampString(), width + width/2, height/2);
-#else
-    ofImage outputPixels;
-    outputPixels.allocate(width, height, OF_IMAGE_COLOR);
-    output.readToPixels(outputPixels);
-    outputPixels.draw(width, 0, width, height);
-#endif
+    ofDrawBitmapString(ofGetTimestampString(), width/2, height/2);
     fbo.end();
-    faves.add(&fbo.getTexture(), name);
+    fbo.readToPixels(outputImage);
+    outputImage.update();
+#else
+    output.readToPixels(outputImage);
+#endif
+    
+    faves.add(&inputImage, &outputImage, name);
 }
 
 //--------------------------------------------------------------
@@ -386,32 +393,10 @@ void ofApp::drawUserView(){
 //--------------------------------------------------------------
 void ofApp::drawPresent(){
     ofBackgroundGradient(ofColor(100), ofColor(0));
-
-    /*
-    if (output.isAllocated()) {
-        int w = int(0.5 * ofGetWidth() - 20);
-        int h = int(float(w) / (output.getWidth() / output.getHeight()));
-        int y = int(0.5 * (ofGetHeight() - h));
-        output.draw(10, y, w, h);
-    }*/
-    
     if (!output.isAllocated()) {
         return;
     }
-    
-    float aspect = output.getWidth() / output.getHeight();
-    float w, h;
-    if (float(ofGetWidth()) / ofGetHeight() > aspect) {
-        h = ofGetHeight() - 20;
-        w = int(float(h) * aspect);
-    } else {
-        w = ofGetWidth() - 20;
-        h = int(float(w) / aspect);
-    }
-    int x = int(0.5 * (ofGetWidth() - w));
-    int y = int(0.5 * (ofGetHeight() - h));
-    output.draw(x, y, w, h);
-    
+    output.draw(outputRect.x, outputRect.y, outputRect.width, outputRect.height);
 }
 
 //--------------------------------------------------------------
@@ -429,12 +414,26 @@ void ofApp::drawTemplates() {
 }
 
 //--------------------------------------------------------------
+void ofApp::resizeOutputRectangle() {
+    float aspect = output.getWidth() / output.getHeight();
+    float w, h;
+    if (float(ofGetWidth()) / ofGetHeight() > aspect) {
+        h = ofGetHeight() - 20;
+        w = int(float(h) * aspect);
+    } else {
+        w = ofGetWidth() - 20;
+        h = int(float(w) / aspect);
+    }
+    int x = int(0.5 * (ofGetWidth() - w));
+    int y = int(0.5 * (ofGetHeight() - h));
+    outputRect.set(x, y, w, h);
+}
+
+//--------------------------------------------------------------
 void ofApp::meander() {
-    
     int mx = cX + int(ofNoise(meanderNoise1, 0.01*ofGetFrameNum()) * cWidth);
     int my = cY + int(ofNoise(meanderNoise2, 0.01*ofGetFrameNum()) * cHeight);
 
-    
     float nz = ofNoise(20, 0.01*ofGetFrameNum());
     if (nz < 0.67 && !meanderMouseActive) {
         meanderMouseActive = true;
@@ -635,7 +634,7 @@ void ofApp::mouseReleasedTemplates(int mx, int my) {
 void ofApp::fullscreenCheck1(){
     if(!bFullscreen1){
         float t = ofGetElapsedTimef();
-        if (t > 4) {
+        if (t > 3) {
             ofSetFullscreen(true);
             bFullscreen1 = true;
         }
@@ -651,7 +650,7 @@ void ofApp::fullscreenCheck1(){
 void ofApp::fullscreenCheck2(){
     if(!bFullscreen2){
         float t = ofGetElapsedTimef();
-        if (t > 4) {
+        if (t > 3) {
             ofSetFullscreen(true);
             bFullscreen2 = true;
         }

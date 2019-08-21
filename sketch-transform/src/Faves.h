@@ -7,7 +7,7 @@
 class FavoritesThumbnail;
 struct FaveButtonSettings {
     string path;
-    ofImage imgIn;
+    string inputPath;
 };
 
 
@@ -22,18 +22,16 @@ public:
 //--------------------------------------------------------------
 class FavoritesThumbnail : public ofxClickable {
 public:
-    void loadIcon(string path, int width, int height);
-    void saveIcon(string path);
+    void loadIcon(string path);
     void buttonClicked();
     void setDrawerName(string drawerName) {this->drawerName = drawerName;}
-    void setInputImage(ofImage *img) {imgIn.setFromPixels(img->getPixels());}
     string getDrawerName() {return drawerName;}
-    ofImage getInputImage() {return imgIn;}
+    string getInputPath() {return inputPath;}
     void draw();
 
 protected:
     FaveButtonSettings settings;
-    ofImage imgIn;
+    string inputPath;
     string drawerName;
 };
 
@@ -41,13 +39,14 @@ protected:
 //--------------------------------------------------------------
 class Favorites {
 public:
+    string inputPath_;
     Favorites();
     
     void setup(int iw_, int ih_, int im_, int marginTop_, int width_, int height_);
     void setCanvasReference(ofxCanvas *canvas) {this->canvas = canvas;}
     void setCanvasOverwrite(bool canvasOverwrite_);
 
-    void add(ofTexture * texture, string name);
+    void add(ofImage * inputImage, ofImage * outputImage, string name);
     void selectMain(int idx);
     void getPaths();
     bool getIsSetup() {return isSetup;}
@@ -72,6 +71,8 @@ public:
     
 protected:
     
+    void resizeMain();
+    void overwriteCanvas(string path);
     void updateCounts();
     void updateThumbnailPositions();
     void checkIfPrevNextAvailable();
@@ -83,6 +84,7 @@ protected:
     ofxClickable next;
     ofTrueTypeFont font, font2;
     ofImage main;
+    int mx, my;
 
     bool canvasOverwrite;
     int favesW, favesH;

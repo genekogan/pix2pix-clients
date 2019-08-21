@@ -15,7 +15,7 @@ using namespace cv;
 using namespace ofxCv;
 
 #define PRESENT
-//#define TEST_MODE
+#define TEST_MODE
 //#define DEBUG_VIEW
 
 
@@ -35,9 +35,6 @@ public:
 
 class ofApp : public ofBaseApp{
 public:
-    
-    void faveButtonEvent(FaveButtonEvent &e);
-    
     
     void setup();
     void setupMain();
@@ -79,6 +76,8 @@ public:
     void saveTemplate();
     void meander();
 
+    void resizeOutputRectangle();
+    void faveButtonEvent(FaveButtonEvent &e);
     void canvasPanelEvent(ofxCanvasButtonEvent &e);
     void keyboardCancelEvent();
     void keyboardSaveEvent();
@@ -100,6 +99,7 @@ public:
     ofImage img;
     ofImage input;
     ofTexture output;
+    ofRectangle outputRect;
 	
     ofxCanvas canvas;
     ofxCanvasPanel panelTop, panelLeft;

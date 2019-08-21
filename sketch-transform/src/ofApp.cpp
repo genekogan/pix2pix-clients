@@ -167,7 +167,15 @@ void ofApp::setup(){
     meanderNoise1 = ofRandom(100);
     meanderNoise2 = ofRandom(100);
 
-    sendToRunway();
+    toSend = true;
+    //sendToRunway();
+    
+    ofAddListener(FaveButtonEvent::events, this, &ofApp::faveButtonEvent);
+}
+
+//--------------------------------------------------------------
+void ofApp::faveButtonEvent(FaveButtonEvent &e) {
+    toSend = true;
 }
 
 //--------------------------------------------------------------
@@ -183,7 +191,6 @@ void ofApp::setupMain(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    fullscreenCheck1();
 
     if (autoMeander) {
         meander();
@@ -317,6 +324,8 @@ void ofApp::templateClicked(string & templatePath) {
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    fullscreenCheck1();
+    
     if (mode == PRESENTATION) {
 #ifdef DEBUG_VIEW
         drawDebug();
@@ -332,12 +341,13 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::drawMain(ofEventArgs & args){
     fullscreenCheck2();
-    ofBackgroundGradient(ofColor(100), ofColor(0));
+    
     if (mode == PRESENTATION) {
         drawPresent();
     }
     else if (mode == FAVORITES) {
         faves.drawPresent();
+        //drawPresent();
     }
 }
 
@@ -379,13 +389,32 @@ void ofApp::drawUserView(){
 //--------------------------------------------------------------
 void ofApp::drawPresent(){
     ofBackgroundGradient(ofColor(100), ofColor(0));
-    
+
+    /*
     if (output.isAllocated()) {
         int w = int(0.5 * ofGetWidth() - 20);
         int h = int(float(w) / (output.getWidth() / output.getHeight()));
         int y = int(0.5 * (ofGetHeight() - h));
         output.draw(10, y, w, h);
+    }*/
+    
+    if (!output.isAllocated()) {
+        return;
     }
+    
+    float aspect = output.getWidth() / output.getHeight();
+    float w, h;
+    if (float(ofGetWidth()) / ofGetHeight() > aspect) {
+        h = ofGetHeight() - 20;
+        w = int(float(h) * aspect);
+    } else {
+        w = ofGetWidth() - 20;
+        h = int(float(w) / aspect);
+    }
+    int x = int(0.5 * (ofGetWidth() - w));
+    int y = int(0.5 * (ofGetHeight() - h));
+    output.draw(x, y, w, h);
+    
 }
 
 //--------------------------------------------------------------

@@ -49,6 +49,7 @@ void FavoritesThumbnail::buttonClicked() {
 //--------------------------------------------------------------
 Favorites::Favorites() {
     isSetup = false;
+    canvasOverwrite = false;
 }
 
 //--------------------------------------------------------------
@@ -93,6 +94,11 @@ void Favorites::setup(int iw_, int ih_, int im_, int marginTop_) {
     ofAddListener(FaveButtonEvent::events, this, &Favorites::buttonEvent);
     ofAddListener(prev.clickEvent, this, &Favorites::prevEvent);
     ofAddListener(next.clickEvent, this, &Favorites::nextEvent);
+}
+
+//--------------------------------------------------------------
+void Favorites::setCanvasOverwrite(bool canvasOverwrite_) {
+    canvasOverwrite = canvasOverwrite_;
 }
 
 //--------------------------------------------------------------
@@ -183,6 +189,10 @@ void Favorites::add(ofTexture * texture, string name) {
     updateCounts();
     updateThumbnailPositions();
     checkIfPrevNextAvailable();
+
+    if (paths.size() == 1) {
+        nextPage();
+    }
 }
 
 //--------------------------------------------------------------
@@ -256,9 +266,26 @@ void Favorites::selectRandom() {
     main.load(favorites[rIdx].getIconPath());
     newCanvas.load(favorites[rIdx].getIconPath());
     main.crop(512, 0, 512, 512);
-    newCanvas.crop(0, 0, 512, 512);
-    newCanvas.resize(canvas->getRectangle().getWidth(), canvas->getRectangle().getHeight());
-    canvas->setFromPixels(newCanvas.getPixels());
+
+
+
+    float aspect = main.getWidth() / main.getHeight();
+    float w, h;
+    if (float(ofGetWidth()) / ofGetHeight() > aspect) {
+        h = ofGetHeight() - 20;
+        w = int(float(h) * aspect);
+    } else {
+        w = ofGetWidth() - 20;
+        h = int(float(w) / aspect);
+    }
+    main.resize(w, h);
+
+    
+    //if (canvasOverwrite){
+        newCanvas.crop(0, 0, 512, 512);
+        newCanvas.resize(canvas->getRectangle().getWidth(), canvas->getRectangle().getHeight());
+        canvas->setFromPixels(newCanvas.getPixels());
+    //}
 }
 
 //--------------------------------------------------------------
@@ -266,9 +293,29 @@ void Favorites::buttonEvent(FaveButtonEvent &e) {
     ofImage newCanvas;
     main.load(e.settings.path);
     main.crop(512, 0, 512, 512);
-    newCanvas.setFromPixels(e.settings.imgIn);
-    newCanvas.resize(canvas->getRectangle().getWidth(), canvas->getRectangle().getHeight());
-    canvas->setFromPixels(newCanvas);
+
+
+
+
+    float aspect = main.getWidth() / main.getHeight();
+    float w, h;
+    if (float(ofGetWidth()) / ofGetHeight() > aspect) {
+        h = ofGetHeight() - 20;
+        w = int(float(h) * aspect);
+    } else {
+        w = ofGetWidth() - 20;
+        h = int(float(w) / aspect);
+    }
+    main.resize(w, h);
+
+
+
+
+    if (canvasOverwrite){
+        newCanvas.setFromPixels(e.settings.imgIn);
+        newCanvas.resize(canvas->getRectangle().getWidth(), canvas->getRectangle().getHeight());
+        canvas->setFromPixels(newCanvas);
+    }
 }
 
 //--------------------------------------------------------------

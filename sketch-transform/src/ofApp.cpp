@@ -141,7 +141,6 @@ void ofApp::setup(){
     ofAddListener(randomFave.clickEvent, this, &ofApp::selectRandomFavorite);
     ofAddListener(saveFaveTimer.event, this, &ofApp::timerUpEvent);
     
-    
     // favorites interface
     //faves.setup(320, 160, 24, 90);
     faves.setCanvasReference(&canvas);
@@ -156,6 +155,7 @@ void ofApp::setup(){
     keyboard.setVisible(false);
     ofAddListener(keyboard.bSave.clickEvent, this, &ofApp::keyboardSaveEvent);
     //ofAddListener(keyboard.bCancel.clickEvent, this, &ofApp::keyboardCancelEvent);
+    ofAddListener(FaveButtonEvent::events, this, &ofApp::faveButtonEvent);
 
     // templates interface
     loadTemplates();
@@ -167,10 +167,8 @@ void ofApp::setup(){
     meanderNoise1 = ofRandom(100);
     meanderNoise2 = ofRandom(100);
 
-    toSend = true;
-    //sendToRunway();
-    
-    ofAddListener(FaveButtonEvent::events, this, &ofApp::faveButtonEvent);
+    //toSend = true;
+    sendToRunway();
 }
 
 //--------------------------------------------------------------

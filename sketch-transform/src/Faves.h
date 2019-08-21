@@ -45,7 +45,8 @@ public:
     
     void setup(int iw_, int ih_, int im_, int marginTop_);
     void setCanvasReference(ofxCanvas *canvas) {this->canvas = canvas;}
-    
+    void setCanvasOverwrite(bool canvasOverwrite_);
+
     void add(ofTexture * texture, string name);
     void selectMain(int idx);
     void getPaths();
@@ -81,9 +82,9 @@ protected:
     ofxClickable prev;
     ofxClickable next;
     ofTrueTypeFont font, font2;
-    
     ofImage main;
 
+    bool canvasOverwrite;
     int favesW, favesH;
     int iw, ih, im, marginTop;
     int nc, nr;

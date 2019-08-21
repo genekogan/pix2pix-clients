@@ -76,7 +76,8 @@ void ofApp::setup() {
 #ifdef CALIBRATION_MODE
     debug = true;
 #else
-    debug = false;
+    //debug = false;
+    debug = true;
 #endif
     bFullscreen2 = false;
 
@@ -88,7 +89,7 @@ void ofApp::setup() {
                 camera_id = d;
             }
         }
-        cam.setDeviceID(0);
+        cam.setDeviceID(camera_id);
         cam.setup(1280, 720);
         srcWidth = 1280;
         srcHeight = 720;
@@ -249,8 +250,21 @@ void ofApp::drawDebug(){
     exitButton.draw();
     defaultButton.draw();
     if (outputTex.isAllocated()) {
-        outputTex.draw(64 + 2*width, 50);
+        outputTex.draw(275, 1580);
     }
+
+    #ifndef CALIBRATION_MODE
+    if (debug) {
+        ofSetColor(ofColor::red);
+        int nSec = int((300-ofGetFrameNum())/ofGetFrameRate());
+        font.drawString("Will go to main app in "+ofToString(nSec)+" seconds...", 400, 30);
+        if (ofGetFrameNum() > 300) {
+            debug = false;
+        }
+        ofSetColor(ofColor::white);
+    }
+    #endif
+
 }
 
 //--------------------------------------------------------------

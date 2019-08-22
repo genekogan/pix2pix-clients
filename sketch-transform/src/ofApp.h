@@ -15,7 +15,7 @@ using namespace cv;
 using namespace ofxCv;
 
 #define PRESENT
-#define TEST_MODE
+//#define TEST_MODE
 //#define DEBUG_VIEW
 
 

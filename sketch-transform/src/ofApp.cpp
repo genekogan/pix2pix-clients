@@ -23,7 +23,7 @@ void ofApp::setup(){
     cY = 135;
     cWidth = 900;//1800;
     cHeight = 900;
-    width = 1024; //1024
+    width = 1024; 
     height = 1024;
     mode = PRESENTATION;
     toSend = false;
@@ -232,7 +232,7 @@ void ofApp::receiveFromRunway(){
     while (runway.tryReceive(bundleToReceive)) {
         ofPixels processedPixels = bundleToReceive.images["output"];
         output.loadData(processedPixels);
-        resizeOutputRectangle();
+        //resizeOutputRectangle();
     }
 }
 
@@ -396,6 +396,7 @@ void ofApp::drawPresent(){
     if (!output.isAllocated()) {
         return;
     }
+    resizeOutputRectangle();
     output.draw(outputRect.x, outputRect.y, outputRect.width, outputRect.height);
 }
 
@@ -418,10 +419,10 @@ void ofApp::resizeOutputRectangle() {
     float aspect = output.getWidth() / output.getHeight();
     float w, h;
     if (float(ofGetWidth()) / ofGetHeight() > aspect) {
-        h = ofGetHeight() - 20;
+        h = ofGetHeight() - 50;
         w = int(float(h) * aspect);
     } else {
-        w = ofGetWidth() - 20;
+        w = ofGetWidth() - 50;
         h = int(float(w) / aspect);
     }
     int x = int(0.5 * (ofGetWidth() - w));
@@ -507,7 +508,7 @@ void ofApp::keyboardSaveEvent() {
     keyboard.setVisible(false);
     keyboard.setMessageString("Saved favorite!", 2);
     saveFave.disable();
-    saveFaveTimer.start(10);
+    saveFaveTimer.start(15);
 }
 
 //--------------------------------------------------------------

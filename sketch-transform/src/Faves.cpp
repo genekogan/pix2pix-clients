@@ -225,9 +225,11 @@ void Favorites::draw() {
 
 //--------------------------------------------------------------
 void Favorites::drawPresent() {
+    ofBackgroundGradient(ofColor(100), ofColor(0));
     if (!main.isAllocated()) {
         return;
     }
+    resizeMain();
     main.draw(mx, my);
 }
 
@@ -240,7 +242,6 @@ void Favorites::selectRandom() {
     
     int rIdx = int(ofRandom(favorites.size()));
     main.load(favorites[rIdx].getIconPath());
-    resizeMain();
     
     overwriteCanvas(favorites[rIdx].getInputPath());
 }
@@ -250,15 +251,17 @@ void Favorites::resizeMain() {
     float aspect = main.getWidth() / main.getHeight();
     float w, h;
     if (float(ofGetWidth()) / ofGetHeight() > aspect) {
-        h = ofGetHeight() - 20;
+        h = ofGetHeight() - 50;
         w = int(float(h) * aspect);
     } else {
-        w = ofGetWidth() - 20;
+        w = ofGetWidth() - 50;
         h = int(float(w) / aspect);
     }
     mx = int(0.5 * (ofGetWidth() - w));
     my = int(0.5 * (ofGetHeight() - h));
-    main.resize(w, h);
+    if (int(main.getWidth()) != int(w)) {
+        main.resize(w, h);
+    }
 }
 
 //--------------------------------------------------------------
@@ -272,7 +275,6 @@ void Favorites::overwriteCanvas(string path) {
 //--------------------------------------------------------------
 void Favorites::buttonEvent(FaveButtonEvent &e) {
     main.load(e.settings.path);
-    resizeMain();
 
     if (canvasOverwrite){
         overwriteCanvas(e.settings.inputPath);

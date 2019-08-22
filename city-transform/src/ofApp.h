@@ -45,6 +45,8 @@ public:
     
     ofTrueTypeFont font;
 
+    string cameraHardwareName;
+    int focusAbsolute;
     ofVideoGrabber cam;
     ofVideoPlayer video;
     ofImage src;

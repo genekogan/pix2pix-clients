@@ -16,7 +16,7 @@ void ofApp::setup() {
 	int position_tx = 0;
     int camera_id = -1;
 	int monitor_calibration_id = 2;
-    string cameraHardwareName = "";
+    cameraHardwareName = "";
 	string path = "master_settings.json";
 	ofFile file(path);
 	if(!file.exists()) {
@@ -95,6 +95,10 @@ void ofApp::setup() {
         cam.setup(1280, 720);
         srcWidth = 1280;
         srcHeight = 720;
+
+        // disable autofocus
+        string cmd = "v4l2-ctl -d "+cameraHardwareName+" --set-ctrl=focus_auto=0";
+        ofSystem(cmd);
     }
     else if (srcMode==1) {
         src.load("test.png");
@@ -126,6 +130,14 @@ void ofApp::setup() {
     sandbox.setOutColor(4, ofColor(0, 0, 0));
     sandbox.loadSettings();
 
+    // initlaize camera focus
+    focusAbsolute = sandbox.getCameraFocus();
+    focusAbsolute -= (focusAbsolute % 5);
+    string cmd = "v4l2-ctl -d "+cameraHardwareName+" --set-ctrl=focus_absolute="+ofToString(focusAbsolute);
+    ofLog() << "Initial focus: " << cmd;
+    ofSystem(cmd);
+
+    // buttons
     font.load("verdana.ttf", 18);
     mappingButton.setup("Mapping", 15, 430, 185, 50);
     mappingButton.setFont(&font);
@@ -200,6 +212,18 @@ void ofApp::sendToRunway() {
 //--------------------------------------------------------------
 void ofApp::update(){
 
+    // update camera focus if needed (wait 30 frames)
+    if (ofGetFrameNum() % 30 == 0){
+        int focusAbsoluteNext = sandbox.getCameraFocus();
+        focusAbsoluteNext -= (focusAbsoluteNext%5);
+        if (focusAbsoluteNext != focusAbsolute) {
+            string cmd = "v4l2-ctl -d "+cameraHardwareName+" --set-ctrl=focus_absolute="+ofToString(focusAbsolute);
+            ofLog() << "Run: "<< cmd;
+            ofSystem(cmd);
+            focusAbsolute = focusAbsoluteNext;
+        } 
+    }
+
     //sandbox.setThreshold(ofMap(ofGetMouseX(), 0, ofGetWidth(), 0, 255));
 
     if (srcMode==0) {
@@ -263,12 +287,12 @@ void ofApp::drawDebug(){
     exitButton.draw();
     defaultButton.draw();
     if (outputTex.isAllocated()) {
-        outputTex.draw(275, ofGetHeight()-5-outputTex.getHeight());
+        outputTex.draw(5, ofGetHeight()-5-outputTex.getHeight());
     }
 
     if (initialDebug.getActive()) {
         ofSetColor(ofColor::red);
-        font.drawString("Will go to main app in "+ofToString(int(20-initialDebug.getElapsedTime()))+" seconds...", 400, 30);
+        font.drawString("Will go to main app in "+ofToString(int(20-initialDebug.getElapsedTime()))+" seconds...", 700, 24);
         ofSetColor(ofColor::white);
     }
 }

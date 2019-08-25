@@ -143,10 +143,10 @@ void ofApp::setup() {
     mappingButton.setFont(&font);
     exitButton.setup("Save & Exit", 15, 620, 185, 50);
     exitButton.setFont(&font);
-    defaultButton.setup("Default settings", 15, 730, 185, 50);
-    defaultButton.setFont(&font);
+    //defaultButton.setup("Default settings", 15, 730, 185, 50);
+    //defaultButton.setFont(&font);
     ofAddListener(exitButton.clickEvent, this, &ofApp::exitButtonClicked);
-    ofAddListener(defaultButton.clickEvent, this, &ofApp::defaultButtonClicked);
+    //ofAddListener(defaultButton.clickEvent, this, &ofApp::defaultButtonClicked);
     ofAddListener(mappingButton.clickEvent, this, &ofApp::mappingButtonClicked);
 
     // init images
@@ -285,7 +285,7 @@ void ofApp::drawDebug(){
     sandbox.drawDebug();
     mappingButton.draw();
     exitButton.draw();
-    defaultButton.draw();
+    //defaultButton.draw();
     if (outputTex.isAllocated()) {
         outputTex.draw(5, ofGetHeight()-5-outputTex.getHeight());
     }
@@ -326,7 +326,7 @@ void ofApp::mouseMoved(int x, int y ){
     if (!debug) return;
     sandbox.mouseMoved(x, y);
     exitButton.mouseMoved(x, y);
-    defaultButton.mouseMoved(x, y);
+    //defaultButton.mouseMoved(x, y);
     mappingButton.mouseMoved(x, y);
 }
 
@@ -335,7 +335,7 @@ void ofApp::mouseDragged(int x, int y, int button){
     if (!debug) return;
     sandbox.mouseDragged(x, y);
     exitButton.mouseDragged(x, y);
-    defaultButton.mouseDragged(x, y);
+    //defaultButton.mouseDragged(x, y);
     mappingButton.mouseDragged(x, y);
 }
 
@@ -344,7 +344,7 @@ void ofApp::mousePressed(int x, int y, int button){
     if (!debug) return;
     sandbox.mousePressed(x, y);
     exitButton.mousePressed(x, y);
-    defaultButton.mousePressed(x, y);
+    //defaultButton.mousePressed(x, y);
     mappingButton.mousePressed(x, y);
 }
 
@@ -353,7 +353,7 @@ void ofApp::mouseReleased(int x, int y, int button){
     if (!debug) return;
     sandbox.mouseReleased(x, y);
     exitButton.mouseReleased(x, y);
-    defaultButton.mouseReleased(x, y);
+    //defaultButton.mouseReleased(x, y);
     mappingButton.mouseReleased(x, y);
 }
 

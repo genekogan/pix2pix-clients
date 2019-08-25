@@ -117,7 +117,7 @@ void ofApp::setup(){
     goToDraw.setPosition(ofGetWidth()-125, 20);
     goToDraw.disable();
     
-    saveFave.setName("Save");
+    saveFave.setName("Speichern");
     saveFave.setFont(&font);
     saveFave.setBackgroundColor(ofColor::lightGray);
     saveFave.setBackgroundGradient(50);
@@ -506,7 +506,7 @@ void ofApp::keyboardSaveEvent() {
     saveFavorite(name);
     keyboard.clearInput();
     keyboard.setVisible(false);
-    keyboard.setMessageString("Saved favorite!", 2);
+    keyboard.setMessageString("Favoriten!", 2);
     saveFave.disable();
     saveFaveTimer.start(15);
 }

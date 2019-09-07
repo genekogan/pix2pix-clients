@@ -53,12 +53,6 @@ void ofApp::setup() {
         ofLog() << "camera requested: " << cameraHardwareName << endl;
         autoMode = json["stress_test"] == 1;
 	}
-
-    
-    resolution_tx = 1920*2;
-    resolution_ty = 1080*2;
-    resolution_px = 1920*2;
-    resolution_py = 1080*2;
     
 #ifdef CALIBRATION_MODE
     ofSetWindowPosition(position_tx, 0);

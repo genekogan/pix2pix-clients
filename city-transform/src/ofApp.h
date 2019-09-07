@@ -15,12 +15,15 @@ public:
     void setup();
     void update();
     void draw();
+    
+    void save();
     void exit();
 
     void drawDebug();
     void drawPresent();
 
     void checkFullscreen();
+    void saveButtonClicked();
     void exitButtonClicked();
     void defaultButtonClicked();
     void mappingButtonClicked();
@@ -39,6 +42,7 @@ public:
     
     ofxRunway runway;
     ofxSandboxTracker sandbox;
+    ofxClickable saveButton;
     ofxClickable exitButton;
     ofxClickable defaultButton;
     ofxClickable mappingButton;

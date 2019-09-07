@@ -54,6 +54,12 @@ void ofApp::setup() {
         autoMode = json["stress_test"] == 1;
 	}
 
+    
+    resolution_tx = 1920*2;
+    resolution_ty = 1080*2;
+    resolution_px = 1920*2;
+    resolution_py = 1080*2;
+    
 #ifdef CALIBRATION_MODE
     ofSetWindowPosition(position_tx, 0);
     ofSetWindowShape(resolution_tx, resolution_ty);
@@ -141,10 +147,13 @@ void ofApp::setup() {
     font.load("verdana.ttf", 18);
     mappingButton.setup("Mapping", 15, 430, 185, 50);
     mappingButton.setFont(&font);
-    exitButton.setup("Save & Exit", 15, 620, 185, 50);
+    saveButton.setup("Save", 15, 620, 185, 50);
+    saveButton.setFont(&font);
+    exitButton.setup("Exit", 15, 800, 185, 50);
     exitButton.setFont(&font);
     //defaultButton.setup("Default settings", 15, 730, 185, 50);
     //defaultButton.setFont(&font);
+    ofAddListener(saveButton.clickEvent, this, &ofApp::saveButtonClicked);
     ofAddListener(exitButton.clickEvent, this, &ofApp::exitButtonClicked);
     //ofAddListener(defaultButton.clickEvent, this, &ofApp::defaultButtonClicked);
     ofAddListener(mappingButton.clickEvent, this, &ofApp::mappingButtonClicked);
@@ -159,6 +168,11 @@ void ofApp::setup() {
     runway.setup("http://localhost:8759");
     runway.start();
 #endif
+}
+
+//--------------------------------------------------------------
+void ofApp::saveButtonClicked() {
+    save();
 }
 
 //--------------------------------------------------------------
@@ -189,12 +203,16 @@ void ofApp::checkFullscreen(){
 }
 
 //--------------------------------------------------------------
-void ofApp::exit() {
-//#ifdef CALIBRATION_MODE
+void ofApp::save() {
+    //#ifdef CALIBRATION_MODE
     string sand1 = "../../../city-transform-calibration/bin/data/sandboxSettings.xml";
     string sand2 = "../../../city-transform-calibration/bin/data/settings.xml";
     sandbox.saveSettings(sand1, sand2);
-//#endif
+    //#endif
+}
+
+//--------------------------------------------------------------
+void ofApp::exit() {
     ofExit();
 }
 
@@ -269,7 +287,7 @@ void ofApp::updateSandbox(){
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-    checkFullscreen();
+//    checkFullscreen();
 
     if (debug) {
         drawDebug();
@@ -284,6 +302,7 @@ void ofApp::drawDebug(){
 
     sandbox.drawDebug();
     mappingButton.draw();
+    saveButton.draw();
     exitButton.draw();
     //defaultButton.draw();
     if (outputTex.isAllocated()) {
@@ -325,6 +344,7 @@ void ofApp::keyPressed(int key){
 void ofApp::mouseMoved(int x, int y ){
     if (!debug) return;
     sandbox.mouseMoved(x, y);
+    saveButton.mouseMoved(x, y);
     exitButton.mouseMoved(x, y);
     //defaultButton.mouseMoved(x, y);
     mappingButton.mouseMoved(x, y);
@@ -334,6 +354,7 @@ void ofApp::mouseMoved(int x, int y ){
 void ofApp::mouseDragged(int x, int y, int button){
     if (!debug) return;
     sandbox.mouseDragged(x, y);
+    saveButton.mouseDragged(x, y);
     exitButton.mouseDragged(x, y);
     //defaultButton.mouseDragged(x, y);
     mappingButton.mouseDragged(x, y);
@@ -343,6 +364,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 void ofApp::mousePressed(int x, int y, int button){
     if (!debug) return;
     sandbox.mousePressed(x, y);
+    saveButton.mousePressed(x, y);
     exitButton.mousePressed(x, y);
     //defaultButton.mousePressed(x, y);
     mappingButton.mousePressed(x, y);
@@ -352,6 +374,7 @@ void ofApp::mousePressed(int x, int y, int button){
 void ofApp::mouseReleased(int x, int y, int button){
     if (!debug) return;
     sandbox.mouseReleased(x, y);
+    saveButton.mouseReleased(x, y);
     exitButton.mouseReleased(x, y);
     //defaultButton.mouseReleased(x, y);
     mappingButton.mouseReleased(x, y);
